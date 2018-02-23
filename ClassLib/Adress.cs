@@ -9,6 +9,10 @@ namespace ClassLib
     public class Adress
     {
         private string adress = "";
+        private int index;
+        private string city;
+        private int house;
+        private int corpus;
 
         public Adress(string str)
         {
