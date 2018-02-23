@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ClassLib
@@ -13,9 +14,11 @@ namespace ClassLib
         private string email;
         private string webSite;
 
+        
+      
 
-        //TODO: process data before set in field
-        public string Phone
+    //TODO: process data before set in field
+    public string Phone
         {
             get
             {
@@ -24,7 +27,27 @@ namespace ClassLib
 
             set
             {
-                phone = value;
+                //Allow user to delete phone
+                if (String.IsNullOrWhiteSpace(value))
+                    phone = "";
+                
+                //Pattern of regExp match phone numbers
+                string pattern = @"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?(\d{3})[\- ]?(\d{2})[\- ]?(\d{2})$";
+                Regex rex = new Regex(pattern);
+                string res = "";
+
+                if (rex.IsMatch(value))
+                {
+                    var group = rex.Match((value)).Groups;
+                    
+                    res = string.Format($"({group[3]}) {group[4]}-{group[5]}-{group[6]}");
+                    phone = res;
+                }
+                else
+                {
+                    throw new FormatException("Номер телефона введен неверно. Формат ввода: (код города) ХХХ-ХХ-ХХ");
+                }
+                
             }
         }
 
@@ -69,7 +92,7 @@ namespace ClassLib
 
         public Contact(string phone, string fax, string email, string webSite)
         {
-            this.phone = phone;
+            Phone = phone;
             this.fax = fax;
             this.email = email;
             this.webSite = webSite;
