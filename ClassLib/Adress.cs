@@ -11,12 +11,22 @@ namespace ClassLib
         private string adress = "";
         private int index;
         private string city;
-        private int house;
-        private int corpus;
+        private string street;
+        private string house;
+        private string corpus;
+        private string stroenie;
+        private string pomeshenie;
 
         public Adress(string str)
         {
             adress = str;
+        }
+
+
+        private void ParseAdress(string adress)
+        {
+            string[] adressArr = adress.Split(',');
+
         }
 
         public override string ToString()

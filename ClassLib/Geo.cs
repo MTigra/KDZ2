@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace ClassLib
 {
@@ -35,6 +37,33 @@ namespace ClassLib
             this.type = type;
             this.x = x;
             this.y = y;
+        }
+
+        public override string ToString()
+        {
+            NumberFormatInfo nfi = new NumberFormatInfo();
+            nfi.NumberDecimalSeparator = ".";
+            string x = X.ToString(nfi);
+            string y = Y.ToString(nfi);
+
+            return string.Format($"{{type = {Type}, coordinates =[{x}, {y}]}}");
+        }
+
+        public Geo(string line)
+        {
+            string pattern = @"^{type=+([a-zA-Z]+), coordinates=[[](\d+?[\.,]\d+)?, (\d+[\.,]\d+)?]}$";
+            Regex rex = new Regex(pattern);
+            if (rex.IsMatch(line))
+            {
+                var group = rex.Match((line)).Groups;
+                type = group[0].Value;
+                x = float.Parse(group[1].Value);
+                y = float.Parse(group[2].Value);
+            }
+            else
+            {
+                throw new FormatException("Неверно введена строкагеографических данных.");
+            }
         }
 
         /// <summary>
@@ -84,5 +113,7 @@ namespace ClassLib
                 y = value;
             }
         }
+
+        
     }
 }
