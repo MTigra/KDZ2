@@ -46,7 +46,7 @@ namespace ClassLib
             string x = X.ToString(nfi);
             string y = Y.ToString(nfi);
 
-            return string.Format($"{{type = {Type}, coordinates =[{x}, {y}]}}");
+            return "{"+ String.Format($"type = {Type}, coordinates =[{X}, {Y}]")+"}";
         }
 
         public Geo(string line)
@@ -56,9 +56,9 @@ namespace ClassLib
             if (rex.IsMatch(line))
             {
                 var group = rex.Match((line)).Groups;
-                type = group[0].Value;
-                x = float.Parse(group[1].Value);
-                y = float.Parse(group[2].Value);
+                type = group[1].Value;
+                x = float.Parse(group[2].Value, CultureInfo.InvariantCulture);
+                y = float.Parse(group[3].Value, CultureInfo.InvariantCulture);
             }
             else
             {
@@ -113,7 +113,7 @@ namespace ClassLib
                 y = value;
             }
         }
-
         
+
     }
 }

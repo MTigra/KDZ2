@@ -24,6 +24,7 @@ namespace ClassLib
         /// </summary>
         private Contact contacts;
 
+        private Geo geo;
         /// <summary>
         /// Initialize new instance of class <see cref="T:ClassLib.Hotel" /> with parameters.
         /// </summary>
@@ -36,12 +37,42 @@ namespace ClassLib
         /// <param name="geotype">string that represents type of X,Y coordinates</param>
         /// <param name="x">Coordinate X</param>
         /// <param name="y">Coordinate y</param>
-        public Hotel(Adress adress, Adress legalAdress, string phone,string fax,string email, string webSite, string geotype, float x, float y)
+        public Hotel(Adress adress, Adress legalAdress, string phone, string fax, string email, string webSite, string geo)
         {
+            this.Geo1 = new Geo(geo);
             this.adress = adress;
-            this.legalAdress = legalAdress;
-            contacts=new Contact(phone,fax,email,webSite);
+            this.LegalAdress = legalAdress;
+            Contacts = new Contact(phone, fax, email, webSite);
         }
 
+        public Adress Adress
+        {
+            get { return adress; }
+            set { adress = value; }
+        }
+
+        /// <summary>
+        /// Represnts a legal adress of this <see cref="T:ClassLib.Hotel" />
+        /// </summary>
+        public Adress LegalAdress
+        {
+            get { return legalAdress; }
+            set { legalAdress = value; }
+        }
+
+        /// <summary>
+        /// Represents a contacts of this <see cref="T:ClassLib.Hotel" />
+        /// </summary>
+        public Contact Contacts
+        {
+            get { return contacts; }
+            set { contacts = value; }
+        }
+
+        public Geo Geo1
+        {
+            get { return geo; }
+            set { geo = value; }
+        }
     }
 }

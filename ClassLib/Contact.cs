@@ -9,13 +9,13 @@ namespace ClassLib
 {
     public class Contact
     {
-        private List<int> phones;
-        private List<int> faxes;
+        private List<long> phones;
+        private List<long> faxes;
         private List<string> email;
         private List<string> webSite;
 
 
-        private int ParsePhoneOrFax(string number)
+        private long ParsePhoneOrFax(string number)
         {
             
 
@@ -28,7 +28,8 @@ namespace ClassLib
             {
                
                 var group = rex.Match((number)).Groups;
-                int res = int.Parse(group[3].Value + group[4] + group[5] + group[6]);
+                string s = group[3].Value.Trim(')', '(',' ') + group[4].Value + group[5].Value + group[6].Value;
+                long res = long.Parse(s);
 
                 return res;
             }
@@ -38,10 +39,10 @@ namespace ClassLib
             }
         }
 
-        private List<int> GetPhoneFaxList(string line)
+        private List<long> GetPhoneFaxList(string line)
         {
             if (string.IsNullOrWhiteSpace(line)) return null;
-            List<int> numberList = new List<int>();
+            List<long> numberList = new List<long>();
             string[] lines = line.Split(';');
             for (int i = 0; i < lines.Length; i++)
             {
@@ -52,7 +53,7 @@ namespace ClassLib
         }
 
         //TODO: process data before set in field
-        public List<int> Phones
+        public List<long> Phones
         {
             get
             {
@@ -62,7 +63,7 @@ namespace ClassLib
             private set { phones = value; }
         }
 
-        public List<int> Faxes
+        public List<long> Faxes
         {
             get
             {
