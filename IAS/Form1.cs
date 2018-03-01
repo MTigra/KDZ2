@@ -54,7 +54,7 @@ namespace IAS
                         do
                         {
                             bool first = true;
-                            while (reader.Read())
+                            while (reader.Read()&& !IsEmptyRow(reader))
                             {
                                 if (first)
                                 {
@@ -92,6 +92,16 @@ namespace IAS
             }
         }
 
+
+        private bool IsEmptyRow(IExcelDataReader reader)
+        {
+            for (var i = 0; i < reader.FieldCount; i++)
+            {
+                if (reader.GetValue(i) != null)
+                    return false;
+            }
+            return true;
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             //It Works

@@ -24,6 +24,16 @@ namespace ClassLib
         /// </summary>
         private Contact contacts;
 
+
+        /// <summary>
+        /// Represents a contacts of this <see cref="T:ClassLib.Hotel" />
+        /// </summary>
+        public Contact Contacts
+        {
+            get { return contacts; }
+            set { contacts = value; }
+        }
+
         private Geo geo;
         /// <summary>
         /// Initialize new instance of class <see cref="T:ClassLib.Hotel" /> with parameters.
@@ -60,14 +70,7 @@ namespace ClassLib
             set { legalAdress = value; }
         }
 
-        /// <summary>
-        /// Represents a contacts of this <see cref="T:ClassLib.Hotel" />
-        /// </summary>
-        public Contact Contacts
-        {
-            get { return contacts; }
-            set { contacts = value; }
-        }
+        
 
         public Geo Geo1
         {

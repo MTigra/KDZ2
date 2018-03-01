@@ -52,6 +52,20 @@ namespace ClassLib
 
         }
 
+        public string PhoneStr
+        {
+            get
+            {
+                string s = "";
+                for (int i = 0; i < Phones.Count; i++)
+                {
+                    ;
+                    s += Phones[i];
+                }
+                return s;
+            }
+        }
+
         //TODO: process data before set in field
         public List<long> Phones
         {
