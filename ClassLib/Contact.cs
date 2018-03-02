@@ -52,45 +52,62 @@ namespace ClassLib
 
         }
 
-        public string PhoneStr
+        public string Faxs
         {
             get
             {
                 string s = "";
+                if (Faxes == null) return s;
+                for (int i = 0; i < Faxes.Count; i++)
+                {
+                    ;
+                    s += Faxes[i].ToString("(###) ###-##-##");
+                }
+                return s;
+            }
+        }
+
+        public string ContactPhone
+        {
+            get
+            {
+               
+                string s = "";
+                if (Phones == null) return s;
                 for (int i = 0; i < Phones.Count; i++)
                 {
                     ;
-                    s += Phones[i];
+                    s += Phones[i].ToString("(###) ###-##-##");
                 }
                 return s;
             }
         }
 
         //TODO: process data before set in field
-        public List<long> Phones
+        private List<long> Phones
         {
             get
             {
                 return phones;
             }
 
-            private set { phones = value; }
+             set { phones = value; }
         }
 
-        public List<long> Faxes
+        private List<long> Faxes
         {
             get
             {
                 return faxes;
             }
 
-            private set
+             set
             {
                 faxes = value;
             }
         }
 
-        public List<string> Email
+        private List<string> Email
         {
             get
             {
@@ -103,7 +120,38 @@ namespace ClassLib
             }
         }
 
-        public List<string> WebSite
+        public string Emails
+        {
+            get
+            {
+
+                string s = "";
+                if (Email == null) return s;
+                for (int i = 0; i < Email.Count; i++)
+                {
+                    ;
+                    s += Email[i];
+                }
+                return s;
+            }
+        }
+
+        public string WebSites
+        {
+            get
+            {
+                string s = "";
+                if (WebSite == null) return s;
+                for (int i = 0; i < WebSite.Count; i++)
+                {
+                    ;
+                    s += WebSite[i];
+                }
+                return s;
+            }
+        }
+
+        private List<string> WebSite
         {
             get
             {

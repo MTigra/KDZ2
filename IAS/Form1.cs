@@ -5,10 +5,11 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using  ClassLib;
+using ClassLib;
 using ExcelDataReader;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -18,18 +19,24 @@ namespace IAS
     public partial class Form1 : Form
     {
         List<string> header = new List<string>();
-            DataTable dt = new DataTable();
+        DataTable dt = new DataTable();
         //List<Hotel> Hotels= new List<Hotel>(200);
-        BindingList<Hotel> bl=new BindingList<Hotel>();
+        BindingList<Hotel> bl = new BindingList<Hotel>();
         BindingList<Geo> bG = new BindingList<Geo>();
         public Form1()
         {
+            
             InitializeComponent();
+            
 
         }
 
+
+
+
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            dataGridView1.AutoGenerateColumns = false;
             
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -39,7 +46,7 @@ namespace IAS
                 //Excel.Workbook xlWorkBook = xlapp.Workbooks.Open(filepath);
                 //Excel.Worksheet worksheet = xlWorkBook.Sheets[1];
                 //Excel.Range xlRange = worksheet.UsedRange;
-                  using (var stream = File.Open(filepath, FileMode.Open, FileAccess.Read))
+                using (var stream = File.Open(filepath, FileMode.Open, FileAccess.ReadWrite))
                 {
 
                     // Auto-detect format, supports:
@@ -54,36 +61,36 @@ namespace IAS
                         do
                         {
                             bool first = true;
-                            while (reader.Read()&& !IsEmptyRow(reader))
+                            while (reader.Read() && !IsEmptyRow(reader))
                             {
                                 if (first)
                                 {
                                     for (int i = 0; i < reader.FieldCount; i++)
                                     {
                                         header.Add(Convert.ToString(reader.GetValue(i)));
-                                       // dataGridView1.Columns.Add(header[i],header[i]);
+                                        // dataGridView1.Columns.Add(header[i],header[i]);
                                     }
-                                    
+
                                     first = false;
                                     continue;
-                                }   
+                                }
 
                                 for (int i = 0; i < reader.ResultsCount; i++)
                                 {
-                                    bl.Add(new Hotel(new Adress(reader.GetString(5)),new Adress(reader.GetString(6)),reader.GetString(7),
-                                        reader.GetString(8),reader.GetString(9),reader.GetString(10),reader.GetString(17)));
+                                    bl.Add(new Hotel(new Address(reader.GetString(5)), new Address(reader.GetString(6)), reader.GetString(7),
+                                        reader.GetString(8), reader.GetString(9), reader.GetString(10), reader.GetString(17)));
                                 }
                             }
                         } while (reader.NextResult());
 
-                        
+
                     }
                 }
 
-                  //а тут не работает, проблема в том что походу дела он не знает как представить втаблице такие объекты к
+                //а тут не работает, проблема в том что походу дела он не знает как представить втаблице такие объекты к
                 dataGridView1.DataSource = bl;
                 dataGridView1.Refresh();
-                
+
 
             }
             else
@@ -110,5 +117,54 @@ namespace IAS
             bG.Add(new Geo("{type=Point, coordinates=[77.24551, 85.714409]}"));
             dataGridView1.DataSource = bG;
         }
+
+        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if ((dataGridView1.Rows[e.RowIndex].DataBoundItem != null) && (dataGridView1.Columns[e.ColumnIndex].DataPropertyName.Contains(".")))
+            {
+                e.Value = BindProperty(
+                    dataGridView1.Rows[e.RowIndex].DataBoundItem,
+                    dataGridView1.Columns[e.ColumnIndex].DataPropertyName
+                );
+            }
+        }
+
+        private string BindProperty(object property, string propertyName)
+        {
+            string retValue = "";
+
+            if (propertyName.Contains("."))
+            {
+                PropertyInfo[] arrayProperties;
+                string leftPropertyName;
+
+                leftPropertyName = propertyName.Substring(0, propertyName.IndexOf("."));
+                arrayProperties = property.GetType().GetProperties();
+
+                foreach (PropertyInfo propertyInfo in arrayProperties)
+                {
+                    if (propertyInfo.Name == leftPropertyName)
+                    {
+                        retValue = BindProperty(
+                            propertyInfo.GetValue(property, null),
+                            propertyName.Substring(propertyName.IndexOf(".") + 1));
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Type propertyType;
+                PropertyInfo propertyInfo;
+
+                propertyType = property.GetType();
+                propertyInfo = propertyType.GetProperty(propertyName);
+                retValue = propertyInfo.GetValue(property, null).ToString();
+            }
+
+            return retValue;
+        }
+
+
     }
 }

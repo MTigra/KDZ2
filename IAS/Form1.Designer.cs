@@ -1,4 +1,6 @@
-﻿namespace IAS
+﻿using ClassLib;
+
+namespace IAS
 {
     partial class Form1
     {
@@ -75,6 +77,24 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.button1 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FullName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.GlobalId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AdmArea = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.District = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LegalAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ContactPhone = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Fax = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Email = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.WebSite = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Categorization = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CertificateNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CertificateIssueDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NumberInFederalList = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CertificateValidity = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NameOfAccreditedOrganization = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.geoData=new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -452,11 +472,32 @@
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ID,
+            this.FullName,
+            this.GlobalId,
+            this.AdmArea,
+            this.District,
+            this.Address,
+            this.LegalAddress,
+            this.ContactPhone,
+            this.Fax,
+            this.Email,
+            this.WebSite,
+            this.Categorization,
+            this.CertificateNumber,
+            this.CertificateIssueDate,
+            this.NumberInFederalList,
+            this.CertificateValidity,
+            this.NameOfAccreditedOrganization,
+            this.geoData
+            });
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(607, 412);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             // 
             // button1
             // 
@@ -471,6 +512,117 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+           
+            //
+            // ID
+            //
+            this.ID.DataPropertyName = "ID";
+            this.ID.HeaderText = "ID";
+            this.ID.Name = "ID";
+            //
+            // FullName
+            //
+            this.FullName.DataPropertyName = "FullName";
+            this.FullName.HeaderText = "FullName";
+            this.FullName.Name = "FullName";
+            //
+            // globalID
+            //
+            this.GlobalId.DataPropertyName = "GlobalId";
+            this.GlobalId.HeaderText = "global_id";
+            this.GlobalId.Name = "GlobalId";
+            //
+            // District
+            //
+            this.District.DataPropertyName = "District";
+            this.District.HeaderText = "District";
+            this.District.Name = "District";
+            //
+            // AdmArea
+            //
+            this.AdmArea.DataPropertyName = "AdmArea";
+            this.AdmArea.HeaderText = "AdmArea";
+            this.AdmArea.Name = "AdmArea";
+            //
+            // Address
+            //
+            this.Address.DataPropertyName = "Address";
+            this.Address.HeaderText = "Address";
+            this.Address.Name = "Address";
+            //
+            // LegalAddress
+            //
+            this.LegalAddress.DataPropertyName = "LegalAddress";
+            this.LegalAddress.HeaderText = "LegalAddress";
+            this.LegalAddress.Name = "LegalAddress";
+            //
+            // Email
+            //
+            this.Email.DataPropertyName = nameof(Contact.Emails);
+            this.Email.HeaderText = "Email";
+            this.Email.Name = "Email";
+            //
+            // WebSite
+            //
+            this.WebSite.DataPropertyName = nameof(Contact.WebSites);
+            this.WebSite.HeaderText = "WebSite";
+            this.WebSite.Name = "WebSite";
+            // 
+            // Fax
+            // 
+            this.Fax.DataPropertyName = "Contacts.Faxs";
+            this.Fax.HeaderText = "Fax";
+            this.Fax.Name = "Fax";
+            // 
+            // ContactPhone
+            // 
+            this.ContactPhone.DataPropertyName = "Contacts.ContactPhone";
+            this.ContactPhone.HeaderText = "ContactPhone";
+            this.ContactPhone.Name = "ContactPhone";
+
+            //
+            // Categorization
+            //
+            this.Categorization.DataPropertyName = "Categorization";
+            this.Categorization.HeaderText = "Categorization";
+            this.Categorization.Name = "Categorization";
+            //
+            // CertificateNumber
+            //
+            this.CertificateNumber.DataPropertyName = "CertificateNumber";
+            this.CertificateNumber.HeaderText = "CertificateNumber";
+            this.CertificateNumber.Name = "CertificateNumber";
+            //
+            // CertificateIssueDate
+            //
+            this.CertificateIssueDate.DataPropertyName = "CertificateIssueDate";
+            this.CertificateIssueDate.HeaderText = "CertificateIssueDate";
+            this.CertificateIssueDate.Name = "CertificateIssueDate";
+            //
+            // NumberInFederalList
+            //
+            this.NumberInFederalList.DataPropertyName = "NumberInFederalList";
+            this.NumberInFederalList.HeaderText = "NumberInFederalList";
+            this.NumberInFederalList.Name = "NumberInFederalList";
+            //
+            // CertificateValidity
+            //
+            this.CertificateValidity.DataPropertyName = "CertificateValidity";
+            this.CertificateValidity.HeaderText = "CertificateValidity";
+            this.CertificateValidity.Name = "CertificateValidity";
+            //
+            // NameOfAccreditedOrganization
+            //
+            this.NameOfAccreditedOrganization.DataPropertyName = "NameOfAccreditedOrganization";
+            this.NameOfAccreditedOrganization.HeaderText = "NameOfAccreditedOrganization";
+            this.NameOfAccreditedOrganization.Name = "NameOfAccreditedOrganization";
+            //
+            // geoData
+            //
+            this.geoData.DataPropertyName = "Geo";
+            this.geoData.HeaderText = "geoData";
+            this.geoData.Name = "geoData";
+
             // 
             // Form1
             // 
@@ -546,6 +698,25 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FullName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn GlobalId;
+        private System.Windows.Forms.DataGridViewTextBoxColumn AdmArea;
+        private System.Windows.Forms.DataGridViewTextBoxColumn District;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Address;
+        private System.Windows.Forms.DataGridViewTextBoxColumn LegalAddress;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ContactPhone;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Fax;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Email;
+        private System.Windows.Forms.DataGridViewTextBoxColumn WebSite;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Categorization;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CertificateNumber;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CertificateIssueDate;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NumberInFederalList;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CertificateValidity;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NameOfAccreditedOrganization;
+        private System.Windows.Forms.DataGridViewTextBoxColumn geoData;
+
     }
 }
 

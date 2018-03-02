@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace ClassLib
 {
-    public class HotelsList:BindingList<Hotel>
+    public class Funcs
     {
+
+        public void SetUpColumns()
+        {
+            
+        }
     }
 }

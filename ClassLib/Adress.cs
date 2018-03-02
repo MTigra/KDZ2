@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ClassLib
 {
-    public class Adress
+    public class Address
     {
         private string adress = "";
         private int index;
@@ -17,15 +17,15 @@ namespace ClassLib
         private string stroenie;
         private string pomeshenie;
 
-        public Adress(string str)
+        public Address(string str)
         {
             adress = str;
         }
 
 
-        private void ParseAdress(string adress)
+        private void ParseAdress(string address)
         {
-            string[] adressArr = adress.Split(',');
+            string[] adressArr = address.Split(',');
 
         }
 

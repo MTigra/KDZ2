@@ -14,11 +14,11 @@ namespace ClassLib
         /// <summary>
         /// Repreents a de-facto adress of this <see cref="T:ClassLib.Hotel" />
         /// </summary>
-        private Adress adress;
+        private Address address;
         /// <summary>
         /// Represnts a legal adress of this <see cref="T:ClassLib.Hotel" />
         /// </summary>
-        private Adress legalAdress;
+        private Address legalAddress;
         /// <summary>
         /// Represents a contacts of this <see cref="T:ClassLib.Hotel" />
         /// </summary>
@@ -47,32 +47,32 @@ namespace ClassLib
         /// <param name="geotype">string that represents type of X,Y coordinates</param>
         /// <param name="x">Coordinate X</param>
         /// <param name="y">Coordinate y</param>
-        public Hotel(Adress adress, Adress legalAdress, string phone, string fax, string email, string webSite, string geo)
+        public Hotel(Address adress, Address legalAdress, string phone, string fax, string email, string webSite, string geo)
         {
-            this.Geo1 = new Geo(geo);
-            this.adress = adress;
+            this.Geo = new Geo(geo);
+            this.address = adress;
             this.LegalAdress = legalAdress;
             Contacts = new Contact(phone, fax, email, webSite);
         }
 
-        public Adress Adress
+        public Address Adress
         {
-            get { return adress; }
-            set { adress = value; }
+            get { return address; }
+            set { address = value; }
         }
 
         /// <summary>
         /// Represnts a legal adress of this <see cref="T:ClassLib.Hotel" />
         /// </summary>
-        public Adress LegalAdress
+        public Address LegalAdress
         {
-            get { return legalAdress; }
-            set { legalAdress = value; }
+            get { return legalAddress; }
+            set { legalAddress = value; }
         }
 
         
 
-        public Geo Geo1
+        public Geo Geo
         {
             get { return geo; }
             set { geo = value; }
