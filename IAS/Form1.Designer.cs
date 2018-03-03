@@ -75,8 +75,6 @@ namespace IAS
             this.справкаToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.button1 = new System.Windows.Forms.Button();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.FullName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GlobalId = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -94,7 +92,10 @@ namespace IAS
             this.NumberInFederalList = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CertificateValidity = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NameOfAccreditedOrganization = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.geoData=new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.geoData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button1 = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -113,7 +114,7 @@ namespace IAS
             this.справкаToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(784, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1285, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -166,6 +167,7 @@ namespace IAS
             this.сохранитьToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.сохранитьToolStripMenuItem.Text = "&Сохранить";
+            this.сохранитьToolStripMenuItem.Click += new System.EventHandler(this.сохранитьToolStripMenuItem_Click);
             // 
             // сохранитькакToolStripMenuItem
             // 
@@ -356,7 +358,7 @@ namespace IAS
             this.справкаToolStripButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(784, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1285, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -465,8 +467,8 @@ namespace IAS
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.button1);
-            this.splitContainer1.Size = new System.Drawing.Size(784, 412);
-            this.splitContainer1.SplitterDistance = 607;
+            this.splitContainer1.Size = new System.Drawing.Size(1285, 597);
+            this.splitContainer1.SplitterDistance = 994;
             this.splitContainer1.TabIndex = 2;
             // 
             // dataGridView1
@@ -490,14 +492,121 @@ namespace IAS
             this.NumberInFederalList,
             this.CertificateValidity,
             this.NameOfAccreditedOrganization,
-            this.geoData
-            });
+            this.geoData});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(607, 412);
+            this.dataGridView1.Size = new System.Drawing.Size(994, 597);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
+            // 
+            // ID
+            // 
+            this.ID.DataPropertyName = "ID";
+            this.ID.HeaderText = "ID";
+            this.ID.Name = "ID";
+            // 
+            // FullName
+            // 
+            this.FullName.DataPropertyName = "FullName";
+            this.FullName.HeaderText = "FullName";
+            this.FullName.Name = "FullName";
+            // 
+            // GlobalId
+            // 
+            this.GlobalId.DataPropertyName = "GlobalId";
+            this.GlobalId.HeaderText = "global_id";
+            this.GlobalId.Name = "GlobalId";
+            // 
+            // AdmArea
+            // 
+            this.AdmArea.DataPropertyName = "AdmArea";
+            this.AdmArea.HeaderText = "AdmArea";
+            this.AdmArea.Name = "AdmArea";
+            // 
+            // District
+            // 
+            this.District.DataPropertyName = "District";
+            this.District.HeaderText = "District";
+            this.District.Name = "District";
+            // 
+            // Address
+            // 
+            this.Address.DataPropertyName = "Address";
+            this.Address.HeaderText = "Address";
+            this.Address.Name = "Address";
+            // 
+            // LegalAddress
+            // 
+            this.LegalAddress.DataPropertyName = "LegalAddress";
+            this.LegalAddress.HeaderText = "LegalAddress";
+            this.LegalAddress.Name = "LegalAddress";
+            // 
+            // ContactPhone
+            // 
+            this.ContactPhone.DataPropertyName = "Contacts.ContactPhone";
+            this.ContactPhone.HeaderText = "ContactPhone";
+            this.ContactPhone.Name = "ContactPhone";
+            // 
+            // Fax
+            // 
+            this.Fax.DataPropertyName = "Contacts.Faxs";
+            this.Fax.HeaderText = "Fax";
+            this.Fax.Name = "Fax";
+            // 
+            // Email
+            // 
+            this.Email.DataPropertyName = "Contact.Emails";
+            this.Email.HeaderText = "Email";
+            this.Email.Name = "Email";
+            // 
+            // WebSite
+            // 
+            this.WebSite.DataPropertyName = "Contact.WebSites";
+            this.WebSite.HeaderText = "WebSite";
+            this.WebSite.Name = "WebSite";
+            // 
+            // Categorization
+            // 
+            this.Categorization.DataPropertyName = "Categorization";
+            this.Categorization.HeaderText = "Categorization";
+            this.Categorization.Name = "Categorization";
+            // 
+            // CertificateNumber
+            // 
+            this.CertificateNumber.DataPropertyName = "CertificateNumber";
+            this.CertificateNumber.HeaderText = "CertificateNumber";
+            this.CertificateNumber.Name = "CertificateNumber";
+            // 
+            // CertificateIssueDate
+            // 
+            this.CertificateIssueDate.DataPropertyName = "CertificateIssueDate";
+            this.CertificateIssueDate.HeaderText = "CertificateIssueDate";
+            this.CertificateIssueDate.Name = "CertificateIssueDate";
+            // 
+            // NumberInFederalList
+            // 
+            this.NumberInFederalList.DataPropertyName = "NumberInFederalList";
+            this.NumberInFederalList.HeaderText = "NumberInFederalList";
+            this.NumberInFederalList.Name = "NumberInFederalList";
+            // 
+            // CertificateValidity
+            // 
+            this.CertificateValidity.DataPropertyName = "CertificateValidity";
+            this.CertificateValidity.HeaderText = "CertificateValidity";
+            this.CertificateValidity.Name = "CertificateValidity";
+            // 
+            // NameOfAccreditedOrganization
+            // 
+            this.NameOfAccreditedOrganization.DataPropertyName = "NameOfAccreditedOrganization";
+            this.NameOfAccreditedOrganization.HeaderText = "NameOfAccreditedOrganization";
+            this.NameOfAccreditedOrganization.Name = "NameOfAccreditedOrganization";
+            // 
+            // geoData
+            // 
+            this.geoData.DataPropertyName = "GeoData";
+            this.geoData.HeaderText = "geoData";
+            this.geoData.Name = "geoData";
             // 
             // button1
             // 
@@ -512,123 +621,12 @@ namespace IAS
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-           
-            //
-            // ID
-            //
-            this.ID.DataPropertyName = "ID";
-            this.ID.HeaderText = "ID";
-            this.ID.Name = "ID";
-            //
-            // FullName
-            //
-            this.FullName.DataPropertyName = "FullName";
-            this.FullName.HeaderText = "FullName";
-            this.FullName.Name = "FullName";
-            //
-            // globalID
-            //
-            this.GlobalId.DataPropertyName = "GlobalId";
-            this.GlobalId.HeaderText = "global_id";
-            this.GlobalId.Name = "GlobalId";
-            //
-            // District
-            //
-            this.District.DataPropertyName = "District";
-            this.District.HeaderText = "District";
-            this.District.Name = "District";
-            //
-            // AdmArea
-            //
-            this.AdmArea.DataPropertyName = "AdmArea";
-            this.AdmArea.HeaderText = "AdmArea";
-            this.AdmArea.Name = "AdmArea";
-            //
-            // Address
-            //
-            this.Address.DataPropertyName = "Address";
-            this.Address.HeaderText = "Address";
-            this.Address.Name = "Address";
-            //
-            // LegalAddress
-            //
-            this.LegalAddress.DataPropertyName = "LegalAddress";
-            this.LegalAddress.HeaderText = "LegalAddress";
-            this.LegalAddress.Name = "LegalAddress";
-            //
-            // Email
-            //
-            this.Email.DataPropertyName = nameof(Contact.Emails);
-            this.Email.HeaderText = "Email";
-            this.Email.Name = "Email";
-            //
-            // WebSite
-            //
-            this.WebSite.DataPropertyName = nameof(Contact.WebSites);
-            this.WebSite.HeaderText = "WebSite";
-            this.WebSite.Name = "WebSite";
-            // 
-            // Fax
-            // 
-            this.Fax.DataPropertyName = "Contacts.Faxs";
-            this.Fax.HeaderText = "Fax";
-            this.Fax.Name = "Fax";
-            // 
-            // ContactPhone
-            // 
-            this.ContactPhone.DataPropertyName = "Contacts.ContactPhone";
-            this.ContactPhone.HeaderText = "ContactPhone";
-            this.ContactPhone.Name = "ContactPhone";
-
-            //
-            // Categorization
-            //
-            this.Categorization.DataPropertyName = "Categorization";
-            this.Categorization.HeaderText = "Categorization";
-            this.Categorization.Name = "Categorization";
-            //
-            // CertificateNumber
-            //
-            this.CertificateNumber.DataPropertyName = "CertificateNumber";
-            this.CertificateNumber.HeaderText = "CertificateNumber";
-            this.CertificateNumber.Name = "CertificateNumber";
-            //
-            // CertificateIssueDate
-            //
-            this.CertificateIssueDate.DataPropertyName = "CertificateIssueDate";
-            this.CertificateIssueDate.HeaderText = "CertificateIssueDate";
-            this.CertificateIssueDate.Name = "CertificateIssueDate";
-            //
-            // NumberInFederalList
-            //
-            this.NumberInFederalList.DataPropertyName = "NumberInFederalList";
-            this.NumberInFederalList.HeaderText = "NumberInFederalList";
-            this.NumberInFederalList.Name = "NumberInFederalList";
-            //
-            // CertificateValidity
-            //
-            this.CertificateValidity.DataPropertyName = "CertificateValidity";
-            this.CertificateValidity.HeaderText = "CertificateValidity";
-            this.CertificateValidity.Name = "CertificateValidity";
-            //
-            // NameOfAccreditedOrganization
-            //
-            this.NameOfAccreditedOrganization.DataPropertyName = "NameOfAccreditedOrganization";
-            this.NameOfAccreditedOrganization.HeaderText = "NameOfAccreditedOrganization";
-            this.NameOfAccreditedOrganization.Name = "NameOfAccreditedOrganization";
-            //
-            // geoData
-            //
-            this.geoData.DataPropertyName = "Geo";
-            this.geoData.HeaderText = "geoData";
-            this.geoData.Name = "geoData";
-
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 461);
+            this.ClientSize = new System.Drawing.Size(1285, 646);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -716,7 +714,7 @@ namespace IAS
         private System.Windows.Forms.DataGridViewTextBoxColumn CertificateValidity;
         private System.Windows.Forms.DataGridViewTextBoxColumn NameOfAccreditedOrganization;
         private System.Windows.Forms.DataGridViewTextBoxColumn geoData;
-
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 

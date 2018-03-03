@@ -46,7 +46,7 @@ namespace ClassLib
             string x = X.ToString(nfi);
             string y = Y.ToString(nfi);
 
-            return "{"+ String.Format($"type = {Type}, coordinates =[{X}, {Y}]")+"}";
+            return "{"+ String.Format($"type={Type}, coordinates=[{X}, {Y}]")+"}";
         }
 
         public Geo(string line)

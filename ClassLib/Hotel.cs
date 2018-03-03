@@ -47,15 +47,50 @@ namespace ClassLib
         /// <param name="geotype">string that represents type of X,Y coordinates</param>
         /// <param name="x">Coordinate X</param>
         /// <param name="y">Coordinate y</param>
-        public Hotel(Address adress, Address legalAdress, string phone, string fax, string email, string webSite, string geo)
+        public Hotel(Address address, Address legalAddress, string id, string fullName, string phone, string globalId,
+            string Admarea, string district, string categorization,string certificateNumber, string certificateIssueDate,
+            string numberInFederalList,string certificateValidity, string nameOfAccreditedOrg,string fax, string email, string webSite, string geo)
         {
-            this.Geo = new Geo(geo);
-            this.address = adress;
-            this.LegalAdress = legalAdress;
+            this.ID=int.Parse(id);
+            this.FullName = fullName;
+            this.GlobalId = int.Parse(globalId);
+            this.AdmArea = Admarea;
+            this.District = district;
+            this.Categorization = categorization;
+            this.CertificateNumber = certificateNumber;
+            if (String.IsNullOrWhiteSpace(certificateIssueDate)) this.CertificateIssueDate = null;
+            else
+            {
+                this.CertificateIssueDate = DateTime.Parse(certificateIssueDate);
+            }
+            var s = numberInFederalList.Trim();
+            this.NumberInFederalList = int.Parse(s);
+            if (String.IsNullOrWhiteSpace(certificateValidity)) this.CertificateValidity = null;
+            else
+            {
+                this.CertificateValidity = DateTime.Parse(certificateValidity);
+            }
+            
+            this.NameOfAccreditedOrganization = nameOfAccreditedOrg;
+            this.GeoData = new Geo(geo);
+            this.Address = address;
+            this.LegalAddress = legalAddress;
             Contacts = new Contact(phone, fax, email, webSite);
         }
 
-        public Address Adress
+        public string CertificateNumber { get; set; }
+
+        public string Categorization { get; set; }
+
+        public DateTime? CertificateIssueDate { get; set; }
+
+        public int NumberInFederalList { get; set; }
+
+        public DateTime? CertificateValidity { get; set; }
+
+        public int GlobalId { get; set; }
+
+        public Address Address
         {
             get { return address; }
             set { address = value; }
@@ -64,18 +99,23 @@ namespace ClassLib
         /// <summary>
         /// Represnts a legal adress of this <see cref="T:ClassLib.Hotel" />
         /// </summary>
-        public Address LegalAdress
+        public Address LegalAddress
         {
             get { return legalAddress; }
             set { legalAddress = value; }
         }
 
-        
+        public int ID { get; set; }
 
-        public Geo Geo
+        public Geo GeoData
         {
             get { return geo; }
             set { geo = value; }
         }
+
+        public string FullName { get;  set; }
+        public string AdmArea { get; private set; }
+        public string District { get; private set; }
+        public string NameOfAccreditedOrganization { get; private set; }
     }
 }
