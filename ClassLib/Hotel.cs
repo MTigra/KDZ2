@@ -114,8 +114,8 @@ namespace ClassLib
         }
 
         public string FullName { get;  set; }
-        public string AdmArea { get; private set; }
-        public string District { get; private set; }
-        public string NameOfAccreditedOrganization { get; private set; }
+        public string AdmArea { get;  set; }
+        public string District { get;  set; }
+        public string NameOfAccreditedOrganization { get; set; }
     }
 }

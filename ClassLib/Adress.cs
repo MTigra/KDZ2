@@ -8,7 +8,7 @@ namespace ClassLib
 {
     public class Address
     {
-        private string adress = "";
+        private string fullAddress;
         private int index;
         private string city;
         private string street;
@@ -19,7 +19,7 @@ namespace ClassLib
 
         public Address(string str)
         {
-            adress = str;
+            fullAddress = string.IsNullOrWhiteSpace(str) ? null : str;
         }
 
 
@@ -29,9 +29,13 @@ namespace ClassLib
 
         }
 
-        public override string ToString()
+        public string FullAddress
         {
-            return adress;
+            get { return fullAddress; }
+            set
+            {
+               fullAddress= string.IsNullOrWhiteSpace(value) ? null : value;
+            }
         }
     }
 }

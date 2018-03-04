@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -56,7 +57,7 @@ namespace ClassLib
         {
             get
             {
-                string s = "";
+                string s = string.Empty;
                 if (Faxes == null) return s;
                 for (int i = 0; i < Faxes.Count; i++)
                 {
@@ -72,7 +73,7 @@ namespace ClassLib
             get
             {
                
-                string s = "";
+                string s = string.Empty;
                 if (Phones == null) return s;
                 for (int i = 0; i < Phones.Count; i++)
                 {
@@ -129,7 +130,6 @@ namespace ClassLib
                 if (Email == null) return s;
                 for (int i = 0; i < Email.Count; i++)
                 {
-                    ;
                     s += Email[i];
                 }
                 return s;
@@ -141,17 +141,22 @@ namespace ClassLib
             get
             {
                 string s = "";
-                if (WebSite == null) return s;
-                for (int i = 0; i < WebSite.Count; i++)
+                if (WebSiteList == null) return s;
+                for (int i = 0; i < WebSiteList.Count; i++)
                 {
-                    ;
-                    s += WebSite[i];
+                    s += WebSiteList[i];
                 }
                 return s;
             }
+            set
+            {
+                WebSiteList = GetWebSiteList(value);
+              // INotifyPropertyChanged();
+
+            }
         }
 
-        private List<string> WebSite
+        private List<string> WebSiteList
         {
             get
             {
@@ -195,7 +200,7 @@ namespace ClassLib
             Phones = GetPhoneFaxList(phone);
             Faxes = GetPhoneFaxList(fax);
             Email = GetEmailList(email);
-            WebSite = GetWebSiteList(webSite);
+            WebSiteList = GetWebSiteList(webSite);
         }
     }
 }

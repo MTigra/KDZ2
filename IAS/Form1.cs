@@ -21,18 +21,14 @@ namespace IAS
 
     public partial class Form1 : Form
     {
-        List<string> header = new List<string>();
+        
+        //List<string> header = new List<string>();
         DataTable dt = new DataTable();
-        //List<Hotel> Hotels= new List<Hotel>(200);
-
         BindingList<Hotel> bl = new BindingList<Hotel>();
-        BindingList<Geo> bG = new BindingList<Geo>();
+  
         public Form1()
         {
-
             InitializeComponent();
-
-
         }
 
 
@@ -43,16 +39,10 @@ namespace IAS
 
             dataGridView1.AutoGenerateColumns = false;
 
-
-
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                //dataGridView1.DataSource = bl;
+                
                 string filepath = openFileDialog1.FileName;
-                //Excel.Application xlapp = new Excel.Application();
-                //Excel.Workbook xlWorkBook = xlapp.Workbooks.Open(filepath);
-                //Excel.Worksheet worksheet = xlWorkBook.Sheets[1];
-                //Excel.Range xlRange = worksheet.UsedRange;
                 try
                 {
                     using (var stream = File.Open(filepath, FileMode.Open, FileAccess.ReadWrite))
@@ -76,8 +66,8 @@ namespace IAS
                                     {
                                         for (int i = 0; i < reader.FieldCount; i++)
                                         {
-                                            header.Add(Convert.ToString(reader.GetValue(i)));
-                                            // dataGridView1.Columns.Add(header[i],header[i]);
+                                            string colName =Convert.ToString(reader.GetValue(i));
+                                            // dataGridView1.Columns.Add(colName,colName);
                                         }
 
                                         first = false;
@@ -111,7 +101,6 @@ namespace IAS
             {
                 return;
             }
-            //а тут не работает, проблема в том что походу дела он не знает как представить втаблице такие объекты к
             dataGridView1.DataSource = bl;
             dataGridView1.Refresh();
 
@@ -130,9 +119,10 @@ namespace IAS
             }
             return true;
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            bl.OrderBy(x => x.Address.ToString());
+            flag = true;
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -148,6 +138,7 @@ namespace IAS
 
         private string BindProperty(object property, string propertyName)
         {
+
             string retValue = "";
 
             if (propertyName.Contains("."))
@@ -176,7 +167,8 @@ namespace IAS
 
                 propertyType = property.GetType();
                 propertyInfo = propertyType.GetProperty(propertyName);
-                retValue = propertyInfo.GetValue(property, null).ToString();
+                retValue = propertyInfo.GetValue(property, null)==null? string.Empty : propertyInfo.GetValue(property, null).ToString();
+               
             }
 
             return retValue;
@@ -213,7 +205,7 @@ namespace IAS
                 if (dataGridViewColumn.Visible)
                 {
                     dt.Columns.Add(dataGridViewColumn.HeaderText);
-                }
+                }   
             }
             string[] cell = new string[dataGridView.Columns.Count];
             foreach (DataGridViewRow dataGridViewRow in dataGridView.Rows)
@@ -227,5 +219,56 @@ namespace IAS
             return dt;
         }
 
+        private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            var a = e.Context;
+            var colidx = e.ColumnIndex;
+            var d = e.RowIndex;
+            var ex = e.Exception.StackTrace;
+        }
+
+        private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if ((dataGridView1.Rows[e.RowIndex].DataBoundItem != null) && (dataGridView1.Columns[e.ColumnIndex].DataPropertyName.Contains(".")))
+            {
+                SetProperty(
+                    dataGridView1.Rows[e.RowIndex].DataBoundItem,
+                    dataGridView1.Columns[e.ColumnIndex].DataPropertyName,Convert.ToString(dataGridView1.CurrentCell.Value));
+            }
+        }
+
+        private void SetProperty(object property, string propertyName,string val)
+        {
+
+            if (propertyName.Contains("."))
+            {
+                PropertyInfo[] arrayProperties;
+                string leftPropertyName;
+
+                leftPropertyName = propertyName.Substring(0, propertyName.IndexOf("."));
+                arrayProperties = property.GetType().GetProperties();
+
+                foreach (PropertyInfo propertyInfo in arrayProperties)
+                {
+                    if (propertyInfo.Name == leftPropertyName)
+                    {
+                        SetProperty(
+                            propertyInfo.GetValue(property, null),
+                            propertyName.Substring(propertyName.IndexOf(".") + 1),val);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Type propertyType;
+                PropertyInfo propertyInfo;
+
+                propertyType = property.GetType();
+                propertyInfo = propertyType.GetProperty(propertyName);
+                //retValue = propertyInfo.GetValue(property, null) == null ? string.Empty : propertyInfo.GetValue(property, null).ToString();
+                propertyInfo.SetValue(property,val);
+            }
+        }
     }
 }

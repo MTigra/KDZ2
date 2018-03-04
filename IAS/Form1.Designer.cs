@@ -468,7 +468,7 @@ namespace IAS
             // 
             this.splitContainer1.Panel2.Controls.Add(this.button1);
             this.splitContainer1.Size = new System.Drawing.Size(1285, 597);
-            this.splitContainer1.SplitterDistance = 994;
+            this.splitContainer1.SplitterDistance = 993;
             this.splitContainer1.TabIndex = 2;
             // 
             // dataGridView1
@@ -496,9 +496,11 @@ namespace IAS
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(994, 597);
+            this.dataGridView1.Size = new System.Drawing.Size(993, 597);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
+            this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
             // 
             // ID
             // 
@@ -532,13 +534,13 @@ namespace IAS
             // 
             // Address
             // 
-            this.Address.DataPropertyName = "Address";
+            this.Address.DataPropertyName = "Address.FullAddress";
             this.Address.HeaderText = "Address";
             this.Address.Name = "Address";
             // 
             // LegalAddress
             // 
-            this.LegalAddress.DataPropertyName = "LegalAddress";
+            this.LegalAddress.DataPropertyName = "LegalAddress.FullAddress";
             this.LegalAddress.HeaderText = "LegalAddress";
             this.LegalAddress.Name = "LegalAddress";
             // 
@@ -556,13 +558,13 @@ namespace IAS
             // 
             // Email
             // 
-            this.Email.DataPropertyName = "Contact.Emails";
+            this.Email.DataPropertyName = "Contacts.Emails";
             this.Email.HeaderText = "Email";
             this.Email.Name = "Email";
             // 
             // WebSite
             // 
-            this.WebSite.DataPropertyName = "Contact.WebSites";
+            this.WebSite.DataPropertyName = "Contacts.WebSites";
             this.WebSite.HeaderText = "WebSite";
             this.WebSite.Name = "WebSite";
             // 
