@@ -25,11 +25,13 @@ namespace IAS
 
         //List<string> header = new List<string>();
         // DataTable dt = new DataTable();
+       
         FilteredBindingList<Hotel> bl = new FilteredBindingList<Hotel>();
 
         public Form1()
         {
             InitializeComponent();
+            
         }
 
 
@@ -128,6 +130,7 @@ namespace IAS
 
         private void button1_Click(object sender, EventArgs e)
         {
+            //(dataGridView1.DataSource as DataView).RowFilter
            FilterForm a = new FilterForm(dataGridView1);
             a.Show();
         }
@@ -198,17 +201,12 @@ namespace IAS
                 string path = saveFileDialog1.FileName;
                 var aa = new ClosedXML.Excel.XLWorkbook();
 
-
-                System.Diagnostics.Stopwatch sw = new Stopwatch();
-                sw.Start();
                 var ws = aa.AddWorksheet(ToDataTable(dataGridView1), "name");
                 ws.Tables.First().ShowAutoFilter = false;
                 ws.Tables.First().Theme = XLTableTheme.None;
                 ws.Style = XLWorkbook.DefaultStyle;
                 aa.SaveAs(path);
 
-                sw.Stop();
-                MessageBox.Show(sw.Elapsed.ToString());
             }
         }
 

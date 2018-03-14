@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Collections;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace BindingFiltering
 {
@@ -372,41 +374,84 @@ namespace BindingFiltering
         {
             List<T> results;
 
-            // Check to see if the property type we are filtering by implements
-            // the IComparable interface.
-            Type interfaceType =
-                TypeDescriptor.GetProperties(typeof(T))[filterParts.PropName]
-                .PropertyType.GetInterface("IComparable");
+            Type interfaceType;
+            PropertyDescriptor filterPropDesc = null;
+            if (filterParts.PropName.Contains("."))
+            {
+                filterPropDesc = TypeDescriptor.GetProperties(typeof(T))[
+                    filterParts.PropName.Substring(0, filterParts.PropName.IndexOf('.'))];
 
+                interfaceType =
+                    filterPropDesc.GetChildProperties()[
+                            filterParts.PropName.Substring(filterParts.PropName.IndexOf('.') + 1)].PropertyType
+                        .GetInterface("IComparable");
+
+            }
+            else
+            {
+
+                // Check to see if the property type we are filtering by implements
+                // the IComparable interface.
+                interfaceType =
+                    TypeDescriptor.GetProperties(typeof(T))[filterParts.PropName].PropertyType
+                        .GetInterface("IComparable");
+            }
             if (interfaceType == null)
                 throw new InvalidOperationException("Filtered property" +
-                " must implement IComparable.");
+                                                    " must implement IComparable.");
 
             results = new List<T>();
 
             // Check each value and add to the results list.
-            foreach (T item in this)
+            foreach (T item in this.ToArray())
             {
-                if (filterParts.PropDesc.GetValue(item) != null)
+                if (filterParts.PropName.Contains("."))
                 {
-                    IComparable compareValue =
-                        filterParts.PropDesc.GetValue(item) as IComparable;
-                    int result =
-                        compareValue.CompareTo(filterParts.CompareValue);
-                    if (filterParts.OperatorValue ==
-                        FilterOperator.EqualTo && result == 0)
-                        results.Add(item);
-                    if (filterParts.OperatorValue ==
-                        FilterOperator.GreaterThan && result > 0)
-                        results.Add(item);
-                    if (filterParts.OperatorValue ==
-                        FilterOperator.LessThan && result < 0)
-                        results.Add(item);
+                    if (filterPropDesc.GetValue(item) != null)
+                    {
+                        object obj = filterPropDesc.GetValue(item);
+                        if (obj != null)
+                        {
+                            IComparable compareValue =
+                                filterParts.PropDesc.GetValue(obj) as IComparable;
+                            int result =
+                                compareValue.CompareTo(filterParts.CompareValue);
+                            if (filterParts.OperatorValue ==
+                                FilterOperator.EqualTo && result == 0)
+                                results.Add(item);
+                            if (filterParts.OperatorValue ==
+                                FilterOperator.GreaterThan && result > 0)
+                                results.Add(item);
+                            if (filterParts.OperatorValue ==
+                                FilterOperator.LessThan && result < 0)
+                                results.Add(item);
+                        }
+                    }
+                }
+                else
+                {
+                    if (filterParts.PropDesc.GetValue(item) != null)
+                    {
+                        IComparable compareValue =
+                            filterParts.PropDesc.GetValue(item) as IComparable;
+                        int result =
+                            compareValue.CompareTo(filterParts.CompareValue);
+                        if (filterParts.OperatorValue ==
+                            FilterOperator.EqualTo && result == 0)
+                            results.Add(item);
+                        if (filterParts.OperatorValue ==
+                            FilterOperator.GreaterThan && result > 0)
+                            results.Add(item);
+                        if (filterParts.OperatorValue ==
+                            FilterOperator.LessThan && result < 0)
+                            results.Add(item);
+                    }
                 }
             }
             this.ClearItems();
-            foreach (T itemFound in results)
-                this.Add(itemFound);
+                foreach (T itemFound in results)
+                    this.Add(itemFound);
+            
         }
 
         internal SingleFilterInfo ParseFilter(string filterPart)
@@ -421,9 +466,20 @@ namespace BindingFiltering
                 filterStringParts[0].Replace("[", "").
                 Replace("]", "").Replace(" AND ", "").Trim();
 
-            // Get the property descriptor for the filter property name.
-            PropertyDescriptor filterPropDesc =
-                TypeDescriptor.GetProperties(typeof(T))[filterInfo.PropName];
+            PropertyDescriptor filterPropDesc;
+            //Get the property descriptor for the filter property name STEP - 1
+            if (filterInfo.PropName.Contains("."))
+            {
+                filterPropDesc = TypeDescriptor.GetProperties(typeof(T))[
+                   filterInfo.PropName.Substring(0, filterInfo.PropName.IndexOf('.'))];
+                filterPropDesc = filterPropDesc.GetChildProperties()[filterInfo.PropName.Substring(filterInfo.PropName.IndexOf('.') + 1)];
+
+            }
+            else
+            {
+                filterPropDesc =
+                   TypeDescriptor.GetProperties(typeof(T))[filterInfo.PropName];
+            }
 
             // Convert the filter compare value to the property type.
             if (filterPropDesc == null)
@@ -477,6 +533,43 @@ namespace BindingFiltering
             }
             return filterPart;
         }
+
+        //public PropertyDescriptorCollection myGetProperties(object obj)
+        //{
+        //    PropertyDescriptorCollection propertycollection = new PropertyDescriptorCollection(new PropertyDescriptor[1]);
+
+        //    if (obj == null) return new PropertyDescriptorCollection(null);
+
+        //    Type objType = obj.GetType();
+        //    PropertyInfo[] properties = objType.GetProperties();
+        //    foreach (PropertyInfo property in properties)
+        //    {
+        //        object propValue = property.GetValue(obj, null);
+        //        var elems = propValue as IList;
+        //        if (elems != null)
+        //        {
+        //            foreach (var item in elems)
+        //            {
+        //                myGetProperties(item);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            // This will not cut-off System.Collections because of the first check
+        //            if (property.PropertyType.Assembly == objType.Assembly)
+        //            {
+        //                //Console.WriteLine("{0}{1}:", indentString, property.Name);
+
+        //                myGetProperties(propValue);
+        //            }
+        //            else
+        //            {
+        //                Console.WriteLine("{0}{1}:",  property.Name, propValue);
+        //                propertycollection.Add(TypeDescriptor.GetProperties())
+        //            }
+        //        }
+        //    }
+        //}
 
         #endregion Filtering
     }

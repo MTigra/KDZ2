@@ -37,5 +37,9 @@ namespace ClassLib
                fullAddress= string.IsNullOrWhiteSpace(value) ? null : value;
             }
         }
+
+        public string Index {
+            get { return index.ToString(); }
+        }
     }
 }
