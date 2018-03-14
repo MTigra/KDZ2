@@ -61,8 +61,9 @@ namespace ClassLib
                 if (Faxes == null) return s;
                 for (int i = 0; i < Faxes.Count; i++)
                 {
-                    ;
-                    s += Faxes[i].ToString("(###) ###-##-##");
+                    
+                    s += Faxes[i].ToString("(###) ###-##-##") ;
+                    if (i != Faxes.Count - 1) s += ";";
                 }
                 return s;
             }
@@ -77,14 +78,28 @@ namespace ClassLib
                 if (Phones == null) return s;
                 for (int i = 0; i < Phones.Count; i++)
                 {
-                    ;
+
                     s += Phones[i].ToString("(###) ###-##-##");
+                    if (i != Phones.Count - 1) s += ";";
                 }
                 return s;
             }
+            set
+            {
+                Phones=  GetPhoneFaxList(value);
+                //string s = value;
+                //string ret = "";
+                //for (int i = 0; i < s.Length; i++)
+                //{
+                //    if (char.IsDigit(s[i])) ret += s[i];
+                //}
+                //Phones.Add(ret);
+
+            }
+            //todo: Add setter
         }
 
-        //TODO: process data before set in field
+        
         private List<long> Phones
         {
             get

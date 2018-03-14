@@ -60,6 +60,11 @@ namespace ClassLib
                 x = float.Parse(group[2].Value, CultureInfo.InvariantCulture);
                 y = float.Parse(group[3].Value, CultureInfo.InvariantCulture);
             }
+            else if(string.IsNullOrWhiteSpace(line))
+            {
+                x = 0;
+                y = 0;
+            }
             else
             {
                 throw new FormatException("Неверно введена строкагеографических данных.");

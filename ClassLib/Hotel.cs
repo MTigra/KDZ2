@@ -24,7 +24,13 @@ namespace ClassLib
         /// </summary>
         private Contact contacts;
 
-
+        public Hotel()
+        {
+            address= new Address(String.Empty);
+            legalAddress= new Address(String.Empty);
+            contacts= new Contact(string.Empty,string.Empty,string.Empty,string.Empty);
+            geo= new Geo(string.Empty);
+        }
         /// <summary>
         /// Represents a contacts of this <see cref="T:ClassLib.Hotel" />
         /// </summary>
@@ -35,6 +41,7 @@ namespace ClassLib
         }
 
         private Geo geo;
+
         /// <summary>
         /// Initialize new instance of class <see cref="T:ClassLib.Hotel" /> with parameters.
         /// </summary>

@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BindingFiltering;
 using ClassLib;
 using ExcelDataReader;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -21,27 +22,26 @@ namespace IAS
 
     public partial class Form1 : Form
     {
-        
+
         //List<string> header = new List<string>();
-        DataTable dt = new DataTable();
-        BindingList<Hotel> bl = new BindingList<Hotel>();
-  
+        // DataTable dt = new DataTable();
+        FilteredBindingList<Hotel> bl = new FilteredBindingList<Hotel>();
+
         public Form1()
         {
             InitializeComponent();
         }
 
 
-
-
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
             dataGridView1.AutoGenerateColumns = false;
+            
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                
+
                 string filepath = openFileDialog1.FileName;
                 try
                 {
@@ -66,7 +66,7 @@ namespace IAS
                                     {
                                         for (int i = 0; i < reader.FieldCount; i++)
                                         {
-                                            string colName =Convert.ToString(reader.GetValue(i));
+                                            string colName = Convert.ToString(reader.GetValue(i));
                                             // dataGridView1.Columns.Add(colName,colName);
                                         }
 
@@ -101,8 +101,12 @@ namespace IAS
             {
                 return;
             }
-            dataGridView1.DataSource = bl;
-            dataGridView1.Refresh();
+            // dataGridView1.DataSource = bl;
+            // or
+            BindingSource bs = new BindingSource();
+            
+            bs.DataSource = bl;
+            dataGridView1.DataSource = bs;
 
 
         }
@@ -120,19 +124,31 @@ namespace IAS
             return true;
         }
 
+        private bool flag;
+
         private void button1_Click(object sender, EventArgs e)
         {
-            flag = true;
+           FilterForm a = new FilterForm(dataGridView1);
+            a.Show();
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if ((dataGridView1.Rows[e.RowIndex].DataBoundItem != null) && (dataGridView1.Columns[e.ColumnIndex].DataPropertyName.Contains(".")))
+
+            try
             {
-                e.Value = BindProperty(
-                    dataGridView1.Rows[e.RowIndex].DataBoundItem,
-                    dataGridView1.Columns[e.ColumnIndex].DataPropertyName
-                );
+                if ((dataGridView1.Rows[e.RowIndex].DataBoundItem != null) &&
+                    (dataGridView1.Columns[e.ColumnIndex].DataPropertyName.Contains(".")))
+                {
+                    e.Value = BindProperty(
+                        dataGridView1.Rows[e.RowIndex].DataBoundItem,
+                        dataGridView1.Columns[e.ColumnIndex].DataPropertyName
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                
             }
         }
 
@@ -167,8 +183,8 @@ namespace IAS
 
                 propertyType = property.GetType();
                 propertyInfo = propertyType.GetProperty(propertyName);
-                retValue = propertyInfo.GetValue(property, null)==null? string.Empty : propertyInfo.GetValue(property, null).ToString();
-               
+                retValue = propertyInfo.GetValue(property, null) == null ? string.Empty : propertyInfo.GetValue(property, null).ToString();
+
             }
 
             return retValue;
@@ -205,7 +221,7 @@ namespace IAS
                 if (dataGridViewColumn.Visible)
                 {
                     dt.Columns.Add(dataGridViewColumn.HeaderText);
-                }   
+                }
             }
             string[] cell = new string[dataGridView.Columns.Count];
             foreach (DataGridViewRow dataGridViewRow in dataGridView.Rows)
@@ -229,15 +245,10 @@ namespace IAS
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            if ((dataGridView1.Rows[e.RowIndex].DataBoundItem != null) && (dataGridView1.Columns[e.ColumnIndex].DataPropertyName.Contains(".")))
-            {
-                SetProperty(
-                    dataGridView1.Rows[e.RowIndex].DataBoundItem,
-                    dataGridView1.Columns[e.ColumnIndex].DataPropertyName,Convert.ToString(dataGridView1.CurrentCell.Value));
-            }
+
         }
 
-        private void SetProperty(object property, string propertyName,string val)
+        private void SetProperty(object property, string propertyName, string val)
         {
 
             if (propertyName.Contains("."))
@@ -254,7 +265,7 @@ namespace IAS
                     {
                         SetProperty(
                             propertyInfo.GetValue(property, null),
-                            propertyName.Substring(propertyName.IndexOf(".") + 1),val);
+                            propertyName.Substring(propertyName.IndexOf(".") + 1), val);
                         break;
                     }
                 }
@@ -267,7 +278,17 @@ namespace IAS
                 propertyType = property.GetType();
                 propertyInfo = propertyType.GetProperty(propertyName);
                 //retValue = propertyInfo.GetValue(property, null) == null ? string.Empty : propertyInfo.GetValue(property, null).ToString();
-                propertyInfo.SetValue(property,val);
+                propertyInfo.SetValue(property, val);
+            }
+        }
+
+        private void dataGridView1_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
+        {
+            if ((dataGridView1.Rows[e.RowIndex].DataBoundItem != null) && (dataGridView1.Columns[e.ColumnIndex].DataPropertyName.Contains(".")))
+            {
+                SetProperty(
+                    dataGridView1.Rows[e.RowIndex].DataBoundItem,
+                    dataGridView1.Columns[e.ColumnIndex].DataPropertyName, Convert.ToString(e.Value));
             }
         }
     }
