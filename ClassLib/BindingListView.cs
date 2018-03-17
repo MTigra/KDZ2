@@ -5,8 +5,10 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Collections;
+using System.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
+using ClassLib;
 
 namespace BindingFiltering
 {
@@ -23,56 +25,10 @@ namespace BindingFiltering
             get
             { return originalListValue; }
         }
-        #region Searching
 
-        protected override bool SupportsSearchingCore
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        protected override int FindCore(PropertyDescriptor prop, object key)
-        {
-            // Get the property info for the specified property.
-            PropertyInfo propInfo = typeof(T).GetProperty(prop.Name);
-            T item;
-
-            if (key != null)
-            {
-                // Loop through the items to see if the key
-                // value matches the property value.
-                for (int i = 0; i < Count; ++i)
-                {
-                    item = (T)Items[i];
-                    if (propInfo.GetValue(item, null).Equals(key))
-                        return i;
-                }
-            }
-            return -1;
-        }
-
-        public int Find(string property, object key)
-        {
-            // Check the properties for a property with the specified name.
-            PropertyDescriptorCollection properties =
-                TypeDescriptor.GetProperties(typeof(T));
-            PropertyDescriptor prop = properties.Find(property, true);
-
-            // If there is not a match, return -1 otherwise pass search to
-            // FindCore method.
-            if (prop == null)
-                return -1;
-            else
-                return FindCore(prop, key);
-        }
-
-        #endregion Searching
 
         #region Sorting
-        ArrayList sortedList;
-        FilteredBindingList<T> unsortedItems;
+        private IEnumerable<T> items;
         bool isSortedValue;
         ListSortDirection sortDirectionValue;
         PropertyDescriptor sortPropertyValue;
@@ -97,131 +53,41 @@ namespace BindingFiltering
             get { return sortDirectionValue; }
         }
 
-
-        public void ApplySort(string propertyName, ListSortDirection direction)
+        protected override void ApplySortCore(PropertyDescriptor property, ListSortDirection direction)
         {
-            // Check the properties for a property with the specified name.
-            PropertyDescriptor prop = TypeDescriptor.GetProperties(typeof(T))[propertyName];
+            sortPropertyValue = property;
+            sortDirectionValue = direction;
 
-            // If there is not a match, return -1 otherwise pass search to
-            // FindCore method.
-            if (prop == null)
-                throw new ArgumentException(propertyName +
-                    " is not a valid property for type:" + typeof(T).Name);
-            else
-                ApplySortCore(prop, direction);
-        }
-
-        protected override void ApplySortCore(PropertyDescriptor prop,
-            ListSortDirection direction)
-        {
-
-            sortedList = new ArrayList();
-
-            // Check to see if the property type we are sorting by implements
-            // the IComparable interface.
-            Type interfaceType = prop.PropertyType.GetInterface("IComparable");
-
-            if (interfaceType != null)
+            items = null;
+            if (direction == ListSortDirection.Ascending)
             {
-                // If so, set the SortPropertyValue and SortDirectionValue.
-                sortPropertyValue = prop;
-                sortDirectionValue = direction;
-
-                unsortedItems = new FilteredBindingList<T>();
-
-                if (sortPropertyValue != null)
-                {
-                    // Loop through each item, adding it the the sortedItems ArrayList.
-                    foreach (Object item in this.Items)
-                    {
-                        unsortedItems.Add((T)item);
-                        sortedList.Add(prop.GetValue(item));
-                    }
-                }
-                // Call Sort on the ArrayList.
-                sortedList.Sort();
-                T temp;
-
-                // Check the sort direction and then copy the sorted items
-                // back into the list.
-                if (direction == ListSortDirection.Descending)
-                    sortedList.Reverse();
-
-                for (int i = 0; i < this.Count; i++)
-                {
-                    int position = Find(prop.Name, sortedList[i]);
-                    if (position != i && position > 0)
-                    {
-                        temp = this[i];
-                        this[i] = this[position];
-                        this[position] = temp;
-                    }
-                }
-
-                isSortedValue = true;
-
-                // If the list does not have a filter applied, 
-                // raise the ListChanged event so bound controls refresh their
-                // values. Pass -1 for the index since this is a Reset.
-                if (String.IsNullOrEmpty(Filter))
-                    OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+                items = this.OrderBy(item => property.GetValue(item));
             }
             else
-                // If the property type does not implement IComparable, let the user
-                // know.
-                throw new InvalidOperationException("Cannot sort by "
-                    + prop.Name + ". This" + prop.PropertyType.ToString() +
-                    " does not implement IComparable");
-        }
-
-        protected override void RemoveSortCore()
-        {
+            {
+                items = this.OrderByDescending(item => property.GetValue(item));
+            }
             this.RaiseListChangedEvents = false;
-            // Ensure the list has been sorted.
-            if (unsortedItems != null && originalListValue.Count > 0)
-            {
-                this.Clear();
-                if (Filter != null)
-                {
-                    unsortedItems.Filter = this.Filter;
-                    foreach (T item in unsortedItems)
-                        this.Add(item);
-                }
-                else
-                {
-                    foreach (T item in originalListValue)
-                        this.Add(item);
-                }
-                isSortedValue = false;
-                this.RaiseListChangedEvents = true;
-                // Raise the list changed event, indicating a reset, and index
-                // of -1.
-                OnListChanged(new ListChangedEventArgs(ListChangedType.Reset,
-                    -1));
-            }
+            ResetItems(items.ToList());
+            this.RaiseListChangedEvents = true;
+            isSortedValue = true;
+            if (String.IsNullOrEmpty(Filter))
+                OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
         }
 
-        public void RemoveSort()
+        private void ResetItems(IEnumerable<T> items)
         {
-            RemoveSortCore();
-        }
+            this.Clear();
+            this.ClearItems();
 
-
-        public override void EndNew(int itemIndex)
-        {
-            // Check to see if the item is added to the end of the list,
-            // and if so, re-sort the list.
-            if (IsSortedCore && itemIndex > 0
-                && itemIndex == this.Count - 1)
+            foreach (var item in items)
             {
-                ApplySortCore(this.sortPropertyValue,
-                    this.sortDirectionValue);
-                base.EndNew(itemIndex);
+                this.Add(item);
             }
         }
 
         #endregion Sorting
+
 
         #region AdvancedSorting
         public bool SupportsAdvancedSorting
@@ -534,45 +400,10 @@ namespace BindingFiltering
             return filterPart;
         }
 
-        //public PropertyDescriptorCollection myGetProperties(object obj)
-        //{
-        //    PropertyDescriptorCollection propertycollection = new PropertyDescriptorCollection(new PropertyDescriptor[1]);
-
-        //    if (obj == null) return new PropertyDescriptorCollection(null);
-
-        //    Type objType = obj.GetType();
-        //    PropertyInfo[] properties = objType.GetProperties();
-        //    foreach (PropertyInfo property in properties)
-        //    {
-        //        object propValue = property.GetValue(obj, null);
-        //        var elems = propValue as IList;
-        //        if (elems != null)
-        //        {
-        //            foreach (var item in elems)
-        //            {
-        //                myGetProperties(item);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            // This will not cut-off System.Collections because of the first check
-        //            if (property.PropertyType.Assembly == objType.Assembly)
-        //            {
-        //                //Console.WriteLine("{0}{1}:", indentString, property.Name);
-
-        //                myGetProperties(propValue);
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine("{0}{1}:",  property.Name, propValue);
-        //                propertycollection.Add(TypeDescriptor.GetProperties())
-        //            }
-        //        }
-        //    }
-        //}
 
         #endregion Filtering
     }
+
     public struct SingleFilterInfo
     {
         internal string PropName;
@@ -580,6 +411,8 @@ namespace BindingFiltering
         internal Object CompareValue;
         internal FilterOperator OperatorValue;
     }
+
+    
 
     // Enum to hold filter operators. The chars 
     // are converted to their integer values.

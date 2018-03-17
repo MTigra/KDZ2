@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BindingFiltering;
@@ -25,13 +26,13 @@ namespace IAS
 
         //List<string> header = new List<string>();
         // DataTable dt = new DataTable();
-       
+
         FilteredBindingList<Hotel> bl = new FilteredBindingList<Hotel>();
 
         public Form1()
         {
             InitializeComponent();
-            
+
         }
 
 
@@ -39,7 +40,7 @@ namespace IAS
         {
 
             dataGridView1.AutoGenerateColumns = false;
-            
+
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -57,7 +58,7 @@ namespace IAS
                         {
 
                             // Choose one of either 1 or 2:
-
+                            bl.Clear();
                             // 1. Use the reader methods
                             do
                             {
@@ -106,7 +107,7 @@ namespace IAS
             // dataGridView1.DataSource = bl;
             // or
             BindingSource bs = new BindingSource();
-            
+
             bs.DataSource = bl;
             dataGridView1.DataSource = bs;
 
@@ -131,7 +132,7 @@ namespace IAS
         private void button1_Click(object sender, EventArgs e)
         {
             //(dataGridView1.DataSource as DataView).RowFilter
-           FilterForm a = new FilterForm(dataGridView1);
+            FilterForm a = new FilterForm(dataGridView1);
             a.Show();
         }
 
@@ -151,7 +152,7 @@ namespace IAS
             }
             catch (Exception ex)
             {
-                
+
             }
         }
 
@@ -218,15 +219,24 @@ namespace IAS
             {
                 if (dataGridViewColumn.Visible)
                 {
-                    dt.Columns.Add(dataGridViewColumn.HeaderText);
+                    //колонка индекс не должна быть в Excel.
+                    if (dataGridViewColumn.HeaderText != "Index")
+                    {
+                        dt.Columns.Add(dataGridViewColumn.HeaderText);
+                    }
                 }
             }
-            string[] cell = new string[dataGridView.Columns.Count];
+            string[] cell = new string[dataGridView.Columns.Count - 1];
             foreach (DataGridViewRow dataGridViewRow in dataGridView.Rows)
             {
+                int k = 0;
                 for (int i = 0; i < dataGridViewRow.Cells.Count; i++)
                 {
-                    cell[i] = dataGridViewRow.Cells[i].FormattedValue.ToString();
+                    if (dataGridViewRow.Cells[i].OwningColumn.Name != "Index")
+                    {
+                        cell[k] = dataGridViewRow.Cells[i].FormattedValue.ToString();
+                        k++;
+                    }
                 }
                 dt.Rows.Add(cell);
             }
@@ -276,7 +286,10 @@ namespace IAS
                 propertyType = property.GetType();
                 propertyInfo = propertyType.GetProperty(propertyName);
                 //retValue = propertyInfo.GetValue(property, null) == null ? string.Empty : propertyInfo.GetValue(property, null).ToString();
-                propertyInfo.SetValue(property, val);
+                if (propertyInfo.CanWrite)
+                {
+                    propertyInfo.SetValue(property, val);
+                }
             }
         }
 
@@ -287,6 +300,36 @@ namespace IAS
                 SetProperty(
                     dataGridView1.Rows[e.RowIndex].DataBoundItem,
                     dataGridView1.Columns[e.ColumnIndex].DataPropertyName, Convert.ToString(e.Value));
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            ChartingForm chartingForm = new ChartingForm(dataGridView1);
+            chartingForm.Show();
+        }
+
+        private void dataGridView1_CellValidated(object sender, DataGridViewCellEventArgs e)
+        {
+            dataGridView1.Rows[e.RowIndex].ErrorText = null;
+        }
+
+        private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            dataGridView1.Rows[e.RowIndex].ErrorText = "";
+            if (dataGridView1.Rows[e.RowIndex].IsNewRow) { return; }
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "geoData" && dataGridView1[e.ColumnIndex, e.RowIndex].IsInEditMode)
+            {
+                string val = e.FormattedValue.ToString();
+                string pattern = @"^([a-zA-Z]+);\s*(\d+[,]?\d+|\d{1,3})?;\s*(\d+[,]?\d+|\d{1,3})?$";
+                Regex rex = new Regex(pattern);
+                MatchCollection matches = rex.Matches(val);
+                if (matches.Count <= 0)
+                {
+                    e.Cancel = true;
+                    dataGridView1.Rows[e.RowIndex].ErrorText =
+                        "Ошибка при вводе. Введите данные в формате: \"ТипТочки; xx,xx; yy,yy\"";
+                }
             }
         }
     }

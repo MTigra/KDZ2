@@ -166,8 +166,7 @@ namespace ClassLib
             set
             {
                 WebSiteList = GetWebSiteList(value);
-              // INotifyPropertyChanged();
-
+             
             }
         }
 

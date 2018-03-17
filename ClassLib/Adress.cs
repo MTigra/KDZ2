@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ClassLib
@@ -10,23 +11,30 @@ namespace ClassLib
     {
         private string fullAddress;
         private int index;
-        private string city;
-        private string street;
-        private string house;
-        private string corpus;
-        private string stroenie;
-        private string pomeshenie;
 
+
+        Regex rex = new Regex(@"\b[\d]{6}\b");
         public Address(string str)
         {
             fullAddress = string.IsNullOrWhiteSpace(str) ? null : str;
+            index = GetIndex(fullAddress);
         }
 
 
-        private void ParseAdress(string address)
+        private int GetIndex(string address)
         {
-            string[] adressArr = address.Split(',');
 
+            int indx = 0;
+            if (!string.IsNullOrWhiteSpace(address))
+            {
+
+                Match match = rex.Match(address);
+                if (!string.IsNullOrWhiteSpace(match.Value))
+                {
+                    indx = int.Parse(match.Value);
+                }
+            }
+            return indx;
         }
 
         public string FullAddress
@@ -34,12 +42,13 @@ namespace ClassLib
             get { return fullAddress; }
             set
             {
-               fullAddress= string.IsNullOrWhiteSpace(value) ? null : value;
+                fullAddress = string.IsNullOrWhiteSpace(value) ? null : value;
             }
         }
 
-        public string Index {
-            get { return index.ToString(); }
+        public string Index
+        {
+            get { return index.ToString("000000"); }
         }
     }
 }

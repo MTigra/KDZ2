@@ -1,4 +1,5 @@
-﻿using ClassLib;
+﻿using System.Windows.Forms;
+using ClassLib;
 
 namespace IAS
 {
@@ -80,6 +81,7 @@ namespace IAS
             this.GlobalId = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AdmArea = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.District = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LegalAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ContactPhone = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -93,6 +95,7 @@ namespace IAS
             this.CertificateValidity = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NameOfAccreditedOrganization = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.geoData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
@@ -466,6 +469,7 @@ namespace IAS
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.button2);
             this.splitContainer1.Panel2.Controls.Add(this.button1);
             this.splitContainer1.Size = new System.Drawing.Size(1285, 597);
             this.splitContainer1.SplitterDistance = 993;
@@ -480,6 +484,7 @@ namespace IAS
             this.GlobalId,
             this.AdmArea,
             this.District,
+            this.Index,
             this.Address,
             this.LegalAddress,
             this.ContactPhone,
@@ -500,6 +505,8 @@ namespace IAS
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             this.dataGridView1.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dataGridView1_CellParsing);
+            this.dataGridView1.CellValidated += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValidated);
+            this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
             // 
             // ID
@@ -531,6 +538,12 @@ namespace IAS
             this.District.DataPropertyName = "District";
             this.District.HeaderText = "District";
             this.District.Name = "District";
+            // 
+            // Index
+            // 
+            this.Index.DataPropertyName = "LegalAddress.Index";
+            this.Index.HeaderText = "Index";
+            this.Index.Name = "Index";
             // 
             // Address
             // 
@@ -606,17 +619,27 @@ namespace IAS
             // 
             // geoData
             // 
-            this.geoData.DataPropertyName = "GeoData";
+            this.geoData.DataPropertyName = "GeoData.Value";
             this.geoData.HeaderText = "geoData";
             this.geoData.Name = "geoData";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(53, 107);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(96, 23);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "Диаграммы";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(53, 48);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(96, 23);
             this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
+            this.button1.Text = "Фильтр";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -703,6 +726,7 @@ namespace IAS
         private System.Windows.Forms.DataGridViewTextBoxColumn GlobalId;
         private System.Windows.Forms.DataGridViewTextBoxColumn AdmArea;
         private System.Windows.Forms.DataGridViewTextBoxColumn District;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Index;
         private System.Windows.Forms.DataGridViewTextBoxColumn Address;
         private System.Windows.Forms.DataGridViewTextBoxColumn LegalAddress;
         private System.Windows.Forms.DataGridViewTextBoxColumn ContactPhone;
@@ -717,6 +741,7 @@ namespace IAS
         private System.Windows.Forms.DataGridViewTextBoxColumn NameOfAccreditedOrganization;
         private System.Windows.Forms.DataGridViewTextBoxColumn geoData;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private Button button2;
     }
 }
 

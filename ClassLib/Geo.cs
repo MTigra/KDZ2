@@ -16,7 +16,7 @@ namespace ClassLib
         /// <summary>
         /// Represents type of coordinates for this <see cref="T:ClassLib.Geo"/>
         /// </summary>
-        private string type;
+        private string type="Point";
         /// <summary>
         /// Represents coordinate-X of this <see cref="T:ClassLib.Geo"/>
         /// </summary>
@@ -51,7 +51,7 @@ namespace ClassLib
 
         public Geo(string line)
         {
-            string pattern = @"^{type=+([a-zA-Z]+), coordinates=[[](\d+?[\.,]\d+)?, (\d+[\.,]\d+)?]}$";
+            string pattern = @"^{type=([a-zA-Z]+), coordinates=[[](\d+[,]?\d+|\d{1,3})?, (\d+[,]?\d+|\d{1,3})?]}$";
             Regex rex = new Regex(pattern);
             if (rex.IsMatch(line))
             {
@@ -62,8 +62,8 @@ namespace ClassLib
             }
             else if(string.IsNullOrWhiteSpace(line))
             {
-                x = 0;
-                y = 0;
+                x = 00.0f;
+                y = 00.0f;
             }
             else
             {
@@ -118,7 +118,18 @@ namespace ClassLib
                 y = value;
             }
         }
-        
+
+        public string Value
+        {
+            get {return this.ToString(); }
+            set
+            {
+                string[] strs = value.Split(';');
+                Type = strs[0];
+                X = float.Parse(strs[1]);
+                Y = float.Parse(strs[2]);
+            }
+        }
 
     }
 }
