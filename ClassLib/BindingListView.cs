@@ -53,6 +53,11 @@ namespace BindingFiltering
             get { return sortDirectionValue; }
         }
 
+        /// <summary>
+        /// Переопредленный метод для сортировки
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="direction"></param>
         protected override void ApplySortCore(PropertyDescriptor property, ListSortDirection direction)
         {
             sortPropertyValue = property;
@@ -75,6 +80,10 @@ namespace BindingFiltering
                 OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
         }
 
+        /// <summary>
+        /// Метод для очистки данных от лишних(не соответствующих фильтру значений)
+        /// </summary>
+        /// <param name="items"></param>
         private void ResetItems(IEnumerable<T> items)
         {
             this.Clear();
@@ -120,6 +129,9 @@ namespace BindingFiltering
 
         private string filterValue = null;
 
+        /// <summary>
+        /// Свойство возвращающее или устанавливающее значение фильтра.
+        /// </summary>
         public string Filter
         {
             get
@@ -130,18 +142,17 @@ namespace BindingFiltering
             {
                 if (filterValue == value) return;
 
-                // If the value is not null or empty, but doesn't
-                // match expected format, throw an exception.
+                //если пустая строка или не соответсвует формату
                 if (!string.IsNullOrEmpty(value) &&
                     !Regex.IsMatch(value,
                     BuildRegExForFilterFormat(), RegexOptions.Singleline))
                     throw new ArgumentException("Filter is not in " +
                           "the format: propName[<>=]'value'.");
 
-                //Turn off list-changed events.
+                //запрещаем вызывать событие изменения данных в списке, во избежание добавления ненужных данных в список
                 RaiseListChangedEvents = false;
 
-                // If the value is null or empty, reset list.
+                // Пустой фильтр == отмена фильтра
                 if (string.IsNullOrEmpty(value))
                     ResetList();
                 else
@@ -154,20 +165,18 @@ namespace BindingFiltering
                     {
                         string filterPart = matches[count].ToString();
 
-                        // Check to see if the filter was set previously.
-                        // Also, check if current filter is a subset of 
-                        // the previous filter.
+                        
                         if (!String.IsNullOrEmpty(filterValue)
                                 && !value.Contains(filterValue))
                             ResetList();
 
-                        // Parse and apply the filter.
+                        // Обработать фильтр и применить его
                         SingleFilterInfo filterInfo = ParseFilter(filterPart);
                         ApplyFilter(filterInfo);
                         count++;
                     }
                 }
-                // Set the filter value and turn on list changed events.
+                //Обновим список после применения фильтра
                 filterValue = value;
                 RaiseListChangedEvents = true;
                 OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
@@ -175,26 +184,29 @@ namespace BindingFiltering
         }
 
 
-        // Build a regular expression to determine if 
-        // filter is in correct format.
+        /// <summary>
+        /// возвращает регулярное выражение для проверки филььтра
+        /// </summary>
+        /// <returns></returns>
         public static string BuildRegExForFilterFormat()
         {
             StringBuilder regex = new StringBuilder();
 
-            // Look for optional literal brackets, 
-            // followed by word characters or space.
+            
             regex.Append(@"\[?[\w\s]+\]?\s?");
 
-            // Add the operators: > < or =.
+            //операторы 
             regex.Append(@"[><=]");
 
-            //Add optional space followed by optional quote and
-            // any character followed by the optional quote.
+            
             regex.Append(@"\s?'?.+'?");
 
             return regex.ToString();
         }
 
+        /// <summary>
+        /// Сбрасывает все изменения в классе до исходных
+        /// </summary>
         private void ResetList()
         {
             this.ClearItems();
@@ -207,8 +219,7 @@ namespace BindingFiltering
 
         protected override void OnListChanged(ListChangedEventArgs e)
         {
-            // If the list is reset, check for a filter. If a filter 
-            // is applied don't allow items to be added to the list.
+           
             if (e.ListChangedType == ListChangedType.Reset)
             {
                 if (Filter == null || Filter == "")
@@ -216,26 +227,27 @@ namespace BindingFiltering
                 else
                     AllowNew = false;
             }
-            // Add the new item to the original list.
+           
             if (e.ListChangedType == ListChangedType.ItemAdded)
             {
                 OriginalList.Add(this[e.NewIndex]);
-                if (!String.IsNullOrEmpty(Filter))
-                //if (Filter == null || Filter == "")
+                if (!String.IsNullOrEmpty(Filter)) 
                 {
                     string cachedFilter = this.Filter;
                     this.Filter = "";
                     this.Filter = cachedFilter;
                 }
             }
-            // Remove the new item from the original list.
-            if (e.ListChangedType == ListChangedType.ItemDeleted)
+           if (e.ListChangedType == ListChangedType.ItemDeleted)
                 OriginalList.RemoveAt(e.NewIndex);
 
             base.OnListChanged(e);
         }
 
-
+        /// <summary>
+        /// Применяет фильтр
+        /// </summary>
+        /// <param name="filterParts"></param>
         internal void ApplyFilter(SingleFilterInfo filterParts)
         {
             List<T> results;
@@ -256,8 +268,7 @@ namespace BindingFiltering
             else
             {
 
-                // Check to see if the property type we are filtering by implements
-                // the IComparable interface.
+                //проверим реализует ли фильтруемое значенеи IComparable
                 interfaceType =
                     TypeDescriptor.GetProperties(typeof(T))[filterParts.PropName].PropertyType
                         .GetInterface("IComparable");
@@ -268,7 +279,7 @@ namespace BindingFiltering
 
             results = new List<T>();
 
-            // Check each value and add to the results list.
+            //проверяем каждое значнеи относитлеьно фильтра и добавляем в список
             foreach (T item in this.ToArray())
             {
                 if (filterParts.PropName.Contains("."))
@@ -320,6 +331,11 @@ namespace BindingFiltering
             
         }
 
+        /// <summary>
+        /// Считывает фильтр
+        /// </summary>
+        /// <param name="filterPart"></param>
+        /// <returns></returns>
         internal SingleFilterInfo ParseFilter(string filterPart)
         {
             SingleFilterInfo filterInfo = new SingleFilterInfo();
@@ -373,9 +389,14 @@ namespace BindingFiltering
             return filterInfo;
         }
 
+        /// <summary>
+        /// определяет оператор из строки и возвращает его в виде Enum
+        /// </summary>
+        /// <param name="filterPart"></param>
+        /// <returns></returns>
         internal FilterOperator DetermineFilterOperator(string filterPart)
         {
-            // Determine the filter's operator.
+            
             if (Regex.IsMatch(filterPart, "[^>^<]="))
                 return FilterOperator.EqualTo;
             else if (Regex.IsMatch(filterPart, "<[^>^=]"))
@@ -386,9 +407,14 @@ namespace BindingFiltering
                 return FilterOperator.None;
         }
 
+        /// <summary>
+        /// Избавляется от кавычек в фильтре
+        /// </summary>
+        /// <param name="filterPart"></param>
+        /// <returns></returns>
         internal static string StripOffQuotes(string filterPart)
         {
-            // Strip off quotes in compare value if they are present.
+            // избавляемся от кавычек
             if (Regex.IsMatch(filterPart, "'.+'"))
             {
                 int quote = filterPart.IndexOf('\'');
@@ -414,8 +440,9 @@ namespace BindingFiltering
 
     
 
-    // Enum to hold filter operators. The chars 
-    // are converted to their integer values.
+    /// <summary>
+    /// перечисление в котором возможные оператор фильтра
+    /// </summary>
     public enum FilterOperator
     {
         EqualTo = '=',

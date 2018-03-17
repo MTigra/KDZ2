@@ -31,7 +31,6 @@ namespace IAS
         {
             this.button1 = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.filterListBox = new ClassLib.FilterListBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
@@ -53,15 +52,6 @@ namespace IAS
             this.listBox1.Size = new System.Drawing.Size(123, 251);
             this.listBox1.TabIndex = 1;
             this.listBox1.SelectedValueChanged += new System.EventHandler(this.listBox1_SelectedValueChanged);
-            // 
-            // filterListBox
-            // 
-            this.filterListBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.filterListBox.Location = new System.Drawing.Point(200, 43);
-            this.filterListBox.Name = "filterListBox";
-            this.filterListBox.Size = new System.Drawing.Size(120, 95);
-            this.filterListBox.TabIndex = 0;
-            this.filterListBox.TabStop = false;
             // 
             // comboBox1
             // 
@@ -88,7 +78,6 @@ namespace IAS
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private ClassLib.FilterListBox filterListBox;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.ComboBox comboBox1;
     }

@@ -15,8 +15,12 @@ namespace ClassLib
         private List<string> email;
         private List<string> webSite;
 
-
-        private long ParsePhoneOrFax(string number)
+        /// <summary>
+        /// Парсит Телефон или Факс, возвращая числовое представление
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        private static long ParsePhoneOrFax(string number)
         {
             
 
@@ -39,7 +43,11 @@ namespace ClassLib
                 throw new FormatException("Номер телефона введен неверно. Формат ввода: (код города) ХХХ-ХХ-ХХ");
             }
         }
-
+        /// <summary>
+        /// получает список номеров телефонов  или факсов из строки
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
         private List<long> GetPhoneFaxList(string line)
         {
             if (string.IsNullOrWhiteSpace(line)) return null;
@@ -52,7 +60,27 @@ namespace ClassLib
             return numberList;
 
         }
+        /// <summary>
+        /// проверяет возможно ли распарсить строку
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+       static public bool CanParse(string s)
+        {
+            try
+            {
+                ParsePhoneOrFax(s);
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+            return true;
+        }
 
+        /// <summary>
+        /// Получает или задает строкове представление списка факсов
+        /// </summary>
         public string Faxs
         {
             get
@@ -67,8 +95,16 @@ namespace ClassLib
                 }
                 return s;
             }
+            set
+            {
+                Faxes = GetPhoneFaxList(value);
+
+            }
         }
 
+        /// <summary>
+        /// получает или задает строковое представление списка номеров телефонов
+        /// </summary>
         public string ContactPhone
         {
             get
@@ -87,19 +123,14 @@ namespace ClassLib
             set
             {
                 Phones=  GetPhoneFaxList(value);
-                //string s = value;
-                //string ret = "";
-                //for (int i = 0; i < s.Length; i++)
-                //{
-                //    if (char.IsDigit(s[i])) ret += s[i];
-                //}
-                //Phones.Add(ret);
 
             }
             //todo: Add setter
         }
 
-        
+        /// <summary>
+        /// получает или задает список телефонов
+        /// </summary>
         private List<long> Phones
         {
             get
@@ -109,7 +140,9 @@ namespace ClassLib
 
              set { phones = value; }
         }
-
+        /// <summary>
+        /// получает или задает список факсов
+        /// </summary>
         private List<long> Faxes
         {
             get
@@ -122,7 +155,9 @@ namespace ClassLib
                 faxes = value;
             }
         }
-
+        /// <summary>
+        /// Получает или задает список email
+        /// </summary>
         private List<string> Email
         {
             get
@@ -136,6 +171,9 @@ namespace ClassLib
             }
         }
 
+        /// <summary>
+        /// получает или задает строкове представление списка Email
+        /// </summary>
         public string Emails
         {
             get
@@ -146,11 +184,20 @@ namespace ClassLib
                 for (int i = 0; i < Email.Count; i++)
                 {
                     s += Email[i];
+                    if (i != Email.Count - 1) s += ";";
                 }
                 return s;
             }
+            set
+            {
+                Email = GetEmailList(value);
+
+            }
         }
 
+        /// <summary>
+        /// получает или задает строковое представление списка сайтов
+        /// </summary>
         public string WebSites
         {
             get
@@ -160,6 +207,7 @@ namespace ClassLib
                 for (int i = 0; i < WebSiteList.Count; i++)
                 {
                     s += WebSiteList[i];
+                    if (i != WebSiteList.Count - 1) s += ";";
                 }
                 return s;
             }
@@ -169,7 +217,9 @@ namespace ClassLib
              
             }
         }
-
+        /// <summary>
+        /// Получает список сайтов
+        /// </summary>
         private List<string> WebSiteList
         {
             get
@@ -182,7 +232,12 @@ namespace ClassLib
                 webSite = value;
             }
         }
-
+       
+        /// <summary>
+        /// Получает список почт из строки
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
         private List<string> GetEmailList(string line)
         {
             if (string.IsNullOrWhiteSpace(line)) return null;
@@ -190,12 +245,16 @@ namespace ClassLib
             string[] lines = line.Split(';');
             for (int i = 0; i < lines.Length; i++)
             {
-                //Todo:Add checking correct email
-                emailList.Add(lines[i]);
+                
+                emailList.Add(lines[i].Replace(" ",""));
             }
             return emailList;
         }
-
+        /// <summary>
+        /// получает список вебсайтов из строки
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
         private List<string> GetWebSiteList(string line)
         {
             if (string.IsNullOrWhiteSpace(line)) return null;
@@ -203,8 +262,8 @@ namespace ClassLib
             string[] lines = line.Split(';');
             for (int i = 0; i < lines.Length; i++)
             {
-                //Todo:Add checking correct website
-                websiteList.Add(lines[i]);
+               
+                websiteList.Add(lines[i].Replace(" ", ""));
             }
             return websiteList;
         }

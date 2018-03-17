@@ -43,6 +43,7 @@ namespace ClassLib
             set
             {
                 fullAddress = string.IsNullOrWhiteSpace(value) ? null : value;
+                index = GetIndex(fullAddress);
             }
         }
 

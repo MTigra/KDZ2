@@ -60,16 +60,22 @@ namespace IAS
             comboBox1.DisplayMember = "HeaderText";
         }
 
+        /// <summary>
+        /// Подсчитывает количество  одинаковых записей в оперделенном столбце
+        /// </summary>
         private int CountOfSameCells(string val, DataGridViewColumn col)
         {
             int n = 0;
-            for (int i = 0; i < dataGridView.Rows.Count-1; i++)
+            for (int i = 0; i < dataGridView.Rows.Count - 1; i++)
             {
                 if (dataGridView[col.Name, i].FormattedValue.ToString() == val) n++;
             }
             return n;
         }
 
+        /// <summary>
+        /// получает список значений в колонке
+        /// </summary>
         private List<string> GetValuesOfColumn(DataGridViewColumn column)
         {
 
@@ -77,8 +83,7 @@ namespace IAS
             DataGridViewColumn col = column;
             List<string> list = new List<string>(data.Count);
 
-            // Retrieve each value and add it to the ArrayList if it isn't
-            // already present. 
+            
             foreach (Object item in data)
             {
                 Object value = null;
@@ -95,7 +100,7 @@ namespace IAS
                         break;
                     }
                     else if (property.PropertyType == typeof(Address) ||
-                             property.PropertyType == typeof(Contact) ||property.PropertyType==typeof(Geo))
+                             property.PropertyType == typeof(Contact) || property.PropertyType == typeof(Geo))
                     {
                         string propname = col.DataPropertyName.Substring(col.DataPropertyName.IndexOf('.') + 1);
                         if (string.Compare(col.DataPropertyName, property.Name + '.' + propname, true,
@@ -114,7 +119,7 @@ namespace IAS
                 }
 
 
-                // Add values to the ArrayList if they are not already there.
+                
                 if (!list.Contains(value))
                 {
                     list.Add(value.ToString());

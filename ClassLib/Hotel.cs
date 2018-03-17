@@ -90,43 +90,7 @@ namespace ClassLib
         public string CertificateNumber { get; set; }
 
         public string Categorization { get; set; }
-        
-                //string s = value.ToLower();
-                //categorization = s;
-                //if (s.Contains("без"))
-                //{
-                //    categorization = 0;
-                //    return;
-                //}
-                //if (s.Contains("одна"))
-                //{
-                //    categorization = 1;
-                //    return;
-                //}
-                //if (s.Contains("две"))
-                //{
-                //    categorization = 2;
-                //    return;
-                //}
-                //if (s.Contains("три"))
-                //{
-                //    categorization = 3;
-                //    return;
-                //}
-                //if (s.Contains("четыре"))
-                //{
-                //    categorization = 4;
-                //    return;
-                //}
-                //if (s.Contains("пять"))
-                //{
-                //    categorization = 5;
-                //    return;
-                //}
-                //categorization = 0;
-            
-        
-
+    
         public DateTime? CertificateIssueDate { get; set; }
 
         public int NumberInFederalList { get; set; }

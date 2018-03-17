@@ -16,6 +16,7 @@ using ClassLib;
 using ExcelDataReader;
 using Excel = Microsoft.Office.Interop.Excel;
 using ClosedXML.Excel;
+using ExcelDataReader.Exceptions;
 
 
 namespace IAS
@@ -36,6 +37,9 @@ namespace IAS
         }
 
 
+        /// <summary>
+        /// Откртие файла
+        /// </summary>
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -51,15 +55,9 @@ namespace IAS
                     using (var stream = File.Open(filepath, FileMode.Open, FileAccess.ReadWrite))
                     {
 
-                        // Auto-detect format, supports:
-                        //  - Binary Excel files (2.0-2003 format; *.xls)
-                        //  - OpenXml Excel files (2007 format; *.xlsx)
                         using (var reader = ExcelReaderFactory.CreateReader(stream))
                         {
-
-                            // Choose one of either 1 or 2:
                             bl.Clear();
-                            // 1. Use the reader methods
                             do
                             {
                                 bool first = true;
@@ -67,10 +65,18 @@ namespace IAS
                                 {
                                     if (first)
                                     {
-                                        for (int i = 0; i < reader.FieldCount; i++)
+                                        int i = 0;
+                                        foreach (DataGridViewColumn col in dataGridView1.Columns)
                                         {
-                                            string colName = Convert.ToString(reader.GetValue(i));
-                                            // dataGridView1.Columns.Add(colName,colName);
+                                            if (col.HeaderText == "Index") continue;
+
+                                            if (col.HeaderText != "Index" && reader.GetString(i) != col.HeaderText)
+                                            {
+                                                MessageBox.Show(
+                                                    "Данный файл нельзя открыть. Откройте таблицу про гостиницы.");
+                                                return;
+                                            }
+                                            i++;
                                         }
 
                                         first = false;
@@ -89,8 +95,11 @@ namespace IAS
                                             reader.GetString(8), reader.GetString(9), reader.GetString(10),
                                             reader.GetString(17)));
                                     }
+
                                 }
                             } while (reader.NextResult());
+                            button1.Visible = true;
+                            button2.Visible = true;
                         }
                     }
                 }
@@ -98,25 +107,26 @@ namespace IAS
                 {
                     MessageBox.Show(ex.Message);
                 }
+                catch (HeaderException ex)
+                {
+                    MessageBox.Show("Данный файл невозможно открыть. Вероятно, он поврежден.");
+                }
 
             }
             else
             {
                 return;
             }
-            // dataGridView1.DataSource = bl;
-            // or
-            BindingSource bs = new BindingSource();
 
+            BindingSource bs = new BindingSource();
             bs.DataSource = bl;
             dataGridView1.DataSource = bs;
-
-
         }
 
 
-
-
+        /// <summary>
+        /// проверяет пустая ли строка в таблице Excel
+        /// </summary>
         private bool IsEmptyRow(IExcelDataReader reader)
         {
             for (var i = 0; i < reader.FieldCount; i++)
@@ -127,15 +137,32 @@ namespace IAS
             return true;
         }
 
-        private bool flag;
 
+        /// <summary>
+        /// Обрабатывает клик на кнопку "Фильтр"
+        /// </summary>
         private void button1_Click(object sender, EventArgs e)
         {
-            //(dataGridView1.DataSource as DataView).RowFilter
-            FilterForm a = new FilterForm(dataGridView1);
-            a.Show();
+
+            if (button1.Text == "Сбросить Фильтр")
+            {
+                FilterForm a = new FilterForm(dataGridView1);
+                a.ShowDialog();
+                a.Close();
+                button1.Text = "Фильтр";
+                return;
+            }
+            if (button1.Text == "Фильтр")
+            {
+                FilterForm a = new FilterForm(dataGridView1);
+                a.ShowDialog();
+                button1.Text = "Сбросить Фильтр";
+            }
         }
 
+        /// <summary>
+        /// Обрабатывает событие, когда Datagridview начинает форматировать отображение ячейки
+        /// </summary>
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
 
@@ -156,6 +183,12 @@ namespace IAS
             }
         }
 
+        /// <summary>
+        /// Возвращает значение, содержащееся в свойстве через Рефлексию
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
         private string BindProperty(object property, string propertyName)
         {
 
@@ -194,6 +227,9 @@ namespace IAS
             return retValue;
         }
 
+        /// <summary>
+        /// Сохранение в файл
+        /// </summary>
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
@@ -207,10 +243,13 @@ namespace IAS
                 ws.Tables.First().Theme = XLTableTheme.None;
                 ws.Style = XLWorkbook.DefaultStyle;
                 aa.SaveAs(path);
-
+                MessageBox.Show("Файл сохранен.");
             }
         }
 
+        /// <summary>
+        /// переводит Datagridview в DataTable, чтобы сохранить данные в файл
+        /// </summary>
         private DataTable ToDataTable(DataGridView dataGridView)
         {
 
@@ -256,6 +295,9 @@ namespace IAS
 
         }
 
+        /// <summary>
+        /// Устанавливает значение в свойство объекта, используя рефлексию
+        /// </summary>
         private void SetProperty(object property, string propertyName, string val)
         {
 
@@ -285,7 +327,6 @@ namespace IAS
 
                 propertyType = property.GetType();
                 propertyInfo = propertyType.GetProperty(propertyName);
-                //retValue = propertyInfo.GetValue(property, null) == null ? string.Empty : propertyInfo.GetValue(property, null).ToString();
                 if (propertyInfo.CanWrite)
                 {
                     propertyInfo.SetValue(property, val);
@@ -293,6 +334,9 @@ namespace IAS
             }
         }
 
+        /// <summary>
+        /// Обрабатывает событие, когда пользователь покидает режим правки datagridview
+        /// </summary>
         private void dataGridView1_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
         {
             if ((dataGridView1.Rows[e.RowIndex].DataBoundItem != null) && (dataGridView1.Columns[e.ColumnIndex].DataPropertyName.Contains(".")))
@@ -301,19 +345,33 @@ namespace IAS
                     dataGridView1.Rows[e.RowIndex].DataBoundItem,
                     dataGridView1.Columns[e.ColumnIndex].DataPropertyName, Convert.ToString(e.Value));
             }
+            if (dataGridView1.Columns[e.ColumnIndex].DataPropertyName == "LegalAddress.FullAddress")
+            {
+                dataGridView1.Refresh();
+
+            }
         }
 
+        /// <summary>
+        /// Обрабатывает клик на кнопку "Диаграмма"
+        /// </summary>
         private void button2_Click(object sender, EventArgs e)
         {
             ChartingForm chartingForm = new ChartingForm(dataGridView1);
             chartingForm.Show();
         }
 
+        /// <summary>
+        /// Срабатывает при завершении проверки на корректность
+        /// </summary>
         private void dataGridView1_CellValidated(object sender, DataGridViewCellEventArgs e)
         {
             dataGridView1.Rows[e.RowIndex].ErrorText = null;
         }
 
+        /// <summary>
+        /// Проверяет на корректность введенное значение пользователем в ячейку
+        /// </summary>
         private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             dataGridView1.Rows[e.RowIndex].ErrorText = "";
@@ -328,9 +386,48 @@ namespace IAS
                 {
                     e.Cancel = true;
                     dataGridView1.Rows[e.RowIndex].ErrorText =
-                        "Ошибка при вводе. Введите данные в формате: \"ТипТочки; xx,xx; yy,yy\"";
+                        "Ошибка при вводе. Введите геоданные в формате: \"ТипТочки; xx,xx; yy,yy\"";
                 }
             }
+
+            if ((dataGridView1.Columns[e.ColumnIndex].Name == "ContactPhone" ||
+                 dataGridView1.Columns[e.ColumnIndex].Name == "Fax") &&
+                dataGridView1[e.ColumnIndex, e.RowIndex].IsInEditMode)
+            {
+                string val = e.FormattedValue.ToString();
+                string[] lines = val.Split(';');
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    if (!Contact.CanParse(lines[i]))
+                    {
+                        e.Cancel = true;
+                        dataGridView1.Rows[e.RowIndex].ErrorText =
+                            "Ошибка при вводе. Номер телефона и Факс необходимо вводить в таком формате: \"(XXX) XXX-XX-XX\" либо \"XXXXXXXXXX\"\n" +
+                            "Если желаете ввести несколько номеров, то вводите через \";\" без пробела";
+                        return;
+
+                    }
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Открытие справки
+        /// </summary>
+        private void справкаToolStripButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("КДЗ по Программированию: Иформационно-справочная система о гостиницах." +
+                            "Работу Выполнил Мартиросян Т.О. студент 1 курса ПИ НИУ ВШЭ ");
+        }
+
+        /// <summary>
+        /// Клик на кнопку выход
+        /// </summary>
+        private void выходToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
+

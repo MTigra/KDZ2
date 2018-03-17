@@ -46,12 +46,12 @@ namespace ClassLib
             string x = X.ToString(nfi);
             string y = Y.ToString(nfi);
 
-            return "{"+ String.Format($"type={Type}, coordinates=[{X}, {Y}]")+"}";
+            return "{"+ String.Format($"type={Type}, coordinates=[{X.ToString("f3")}, {Y.ToString("f3")}]")+"}";
         }
 
         public Geo(string line)
         {
-            string pattern = @"^{type=([a-zA-Z]+), coordinates=[[](\d+[,]?\d+|\d{1,3})?, (\d+[,]?\d+|\d{1,3})?]}$";
+            string pattern = @"^{type=([a-zA-Z]+), coordinates=[[](\d+[\.,]?\d+|\d{1,3})?, (\d+[\.,]?\d+|\d{1,3})?]}$";
             Regex rex = new Regex(pattern);
             if (rex.IsMatch(line))
             {
@@ -67,7 +67,7 @@ namespace ClassLib
             }
             else
             {
-                throw new FormatException("Неверно введена строкагеографических данных.");
+                throw new FormatException("Неверно введена строка географических данных.");
             }
         }
 
@@ -119,6 +119,9 @@ namespace ClassLib
             }
         }
 
+        /// <summary>
+        /// Получает или задает строковео представление геоданных
+        /// </summary>
         public string Value
         {
             get {return this.ToString(); }
